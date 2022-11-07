@@ -24,7 +24,7 @@
     "lint-sol-fix": "prettier --write \"contracts/**/*.sol\""
   },
   "dependencies": {
-    "@tokene/core-contracts": "^1.0.0",
+    "@tokene/core-contracts": "^1.0.1",
     "@dlsl/dev-modules": "1.7.4",
     "@openzeppelin/contracts": "4.5.0",
     "@openzeppelin/contracts-upgradeable": "4.5.0",
