@@ -6,7 +6,9 @@ import "@dlsl/dev-modules/pool-contracts-registry/AbstractPoolContractsRegistry.
 import "@tokene/core-contracts/core/MasterAccessManagement.sol";
 import "@tokene/core-contracts/core/MasterContractsRegistry.sol";
 
-contract TokenRegistry is AbstractPoolContractsRegistry {
+import "../interfaces/factory/ITokenRegistry.sol";
+
+contract TokenRegistry is ITokenRegistry, AbstractPoolContractsRegistry {
     string public constant CREATE_PERMISSION = "CREATE";
 
     string public constant TOKEN_REGISTRY_RESOURCE = "TOKEN_REGISTRY_RESOURCE";
@@ -40,7 +42,7 @@ contract TokenRegistry is AbstractPoolContractsRegistry {
     function setNewImplementations(
         string[] calldata names,
         address[] calldata newImplementations
-    ) external onlyCreatePermission {
+    ) external override onlyCreatePermission {
         _setNewImplementations(names, newImplementations);
     }
 
@@ -48,7 +50,7 @@ contract TokenRegistry is AbstractPoolContractsRegistry {
         string calldata name,
         uint256 offset,
         uint256 limit
-    ) external onlyCreatePermission {
+    ) external override onlyCreatePermission {
         _injectDependenciesToExistingPools(name, offset, limit);
     }
 

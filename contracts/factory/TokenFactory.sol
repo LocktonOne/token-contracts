@@ -8,10 +8,12 @@ import "@dlsl/dev-modules/pool-contracts-registry/pool-factory/AbstractPoolFacto
 import "@tokene/core-contracts/core/MasterContractsRegistry.sol";
 import "@tokene/core-contracts/core/ReviewableRequests.sol";
 
+import "../interfaces/factory/ITokenFactory.sol";
+
 import "../tokens/TERC20.sol";
 import "./TokenRegistry.sol";
 
-contract TokenFactory is AbstractPoolFactory {
+contract TokenFactory is ITokenFactory, AbstractPoolFactory {
     using Strings for uint256;
 
     string public constant CREATE_PERMISSION = "CREATE";
@@ -50,7 +52,7 @@ contract TokenFactory is AbstractPoolFactory {
     function requestERC20(
         ITERC20.ConstructorParams calldata params_,
         string calldata description_
-    ) external onlyCreatePermission {
+    ) external override onlyCreatePermission {
         bytes memory data_ = abi.encodeWithSelector(this.deployERC20.selector, params_);
 
         _reviewableRequests.createRequest(address(this), data_, "", description_);
@@ -58,7 +60,7 @@ contract TokenFactory is AbstractPoolFactory {
 
     function deployERC20(
         ITERC20.ConstructorParams calldata params_
-    ) external onlyExecutePermission {
+    ) external override onlyExecutePermission {
         string memory tokenType_ = _tokenRegistry.TERC20_NAME();
 
         address tokenProxy_ = _deploy(address(_tokenRegistry), tokenType_);
