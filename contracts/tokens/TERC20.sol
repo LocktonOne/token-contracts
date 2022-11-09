@@ -61,7 +61,10 @@ contract TERC20 is ITERC20, ERC20Upgradeable, AbstractDependant {
     }
 
     function burn(address account_, uint256 amount_) external override {
-        _spendAllowance(account_, msg.sender, amount_);
+        if (account_ != msg.sender) {
+            _spendAllowance(account_, msg.sender, amount_);
+        }
+
         _burn(account_, amount_);
     }
 

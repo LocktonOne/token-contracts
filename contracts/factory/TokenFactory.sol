@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.17;
 
-import "@dlsl/dev-modules/pool-contracts-registry/pool-factory/AbstractPoolFactory.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
+
+import "@dlsl/dev-modules/pool-contracts-registry/pool-factory/AbstractPoolFactory.sol";
 
 import "@tokene/core-contracts/core/MasterContractsRegistry.sol";
 import "@tokene/core-contracts/core/ReviewableRequests.sol";
@@ -24,7 +25,7 @@ contract TokenFactory is AbstractPoolFactory {
     ReviewableRequests internal _reviewableRequests;
     TokenRegistry internal _tokenRegistry;
 
-    event DeployedTERC20(address token);
+    event DeployedERC20(address token);
 
     modifier onlyCreatePermission() {
         _requirePermission(CREATE_PERMISSION);
@@ -72,7 +73,7 @@ contract TokenFactory is AbstractPoolFactory {
         _register(address(_tokenRegistry), tokenType_, tokenProxy_);
         _injectDependencies(address(_tokenRegistry), tokenProxy_);
 
-        emit DeployedTERC20(tokenProxy_);
+        emit DeployedERC20(tokenProxy_);
     }
 
     function _requirePermission(string memory permission_) internal view {
