@@ -90,7 +90,7 @@ describe("TERC20", async () => {
     });
   });
 
-  describe("mint", () => {
+  describe("mintTo", () => {
     it("should be able to mint tokens", async () => {
       await deployTERC20(DefaultTokenParams);
 
@@ -100,7 +100,7 @@ describe("TERC20", async () => {
 
       assert.equal(await token.balanceOf(USER2), "0");
 
-      await token.mint(USER2, wei("100"), { from: USER1 });
+      await token.mintTo(USER2, wei("100"), { from: USER1 });
 
       assert.equal(await token.balanceOf(USER2), wei("100"));
     });
@@ -122,7 +122,7 @@ describe("TERC20", async () => {
 
       assert.equal(await token.balanceOf(USER2), "0");
 
-      await token.mint(USER2, wei("100"), { from: USER1 });
+      await token.mintTo(USER2, wei("100"), { from: USER1 });
 
       assert.equal(await token.balanceOf(USER2), wei("100"));
     });
@@ -142,7 +142,7 @@ describe("TERC20", async () => {
       await masterAccess.grantRoles(USER1, [TERC20Role]);
       await masterAccess.grantRoles(USER2, [TERC20Role]);
 
-      await truffleAssert.reverts(token.mint(USER2, wei("1000"), { from: USER1 }), "TERC20: cap exceeded");
+      await truffleAssert.reverts(token.mintTo(USER2, wei("1000"), { from: USER1 }), "TERC20: cap exceeded");
     });
 
     it("should not be able to mint tokens due to permissions (1)", async () => {
@@ -151,7 +151,7 @@ describe("TERC20", async () => {
       await masterAccess.addPermissionsToRole(TERC20Role, [TERC20Receive], true);
       await masterAccess.grantRoles(USER2, [TERC20Role]);
 
-      await truffleAssert.reverts(token.mint(USER2, wei("100"), { from: USER1 }), "TERC20: access denied");
+      await truffleAssert.reverts(token.mintTo(USER2, wei("100"), { from: USER1 }), "TERC20: access denied");
     });
 
     it("should not be able to mint tokens due to permissions (2)", async () => {
@@ -160,11 +160,11 @@ describe("TERC20", async () => {
       await masterAccess.addPermissionsToRole(TERC20Role, [TERC20Mint], true);
       await masterAccess.grantRoles(USER1, [TERC20Role]);
 
-      await truffleAssert.reverts(token.mint(USER2, wei("100"), { from: USER1 }), "TERC20: access denied");
+      await truffleAssert.reverts(token.mintTo(USER2, wei("100"), { from: USER1 }), "TERC20: access denied");
     });
   });
 
-  describe("burn", () => {
+  describe("burnFrom", () => {
     it("should be able to burn tokens", async () => {
       await deployTERC20(DefaultTokenParams);
 
@@ -172,8 +172,8 @@ describe("TERC20", async () => {
       await masterAccess.grantRoles(USER1, [TERC20Role]);
       await masterAccess.grantRoles(USER2, [TERC20Role]);
 
-      await token.mint(USER2, wei("100"), { from: USER1 });
-      await token.burn(USER2, wei("100"), { from: USER2 });
+      await token.mintTo(USER2, wei("100"), { from: USER1 });
+      await token.burnFrom(USER2, wei("100"), { from: USER2 });
 
       assert.equal(await token.balanceOf(USER2), "0");
     });
@@ -185,13 +185,13 @@ describe("TERC20", async () => {
       await masterAccess.grantRoles(USER1, [TERC20Role]);
       await masterAccess.grantRoles(USER2, [TERC20Role]);
 
-      await token.mint(USER2, wei("100"), { from: USER1 });
+      await token.mintTo(USER2, wei("100"), { from: USER1 });
 
-      await truffleAssert.reverts(token.burn(USER2, wei("100"), { from: USER1 }), "ERC20: insufficient allowance");
+      await truffleAssert.reverts(token.burnFrom(USER2, wei("100"), { from: USER1 }), "ERC20: insufficient allowance");
 
       await token.approve(USER1, wei("100"), { from: USER2 });
 
-      await token.burn(USER2, wei("100"), { from: USER1 });
+      await token.burnFrom(USER2, wei("100"), { from: USER1 });
 
       assert.equal(await token.balanceOf(USER2), "0");
     });
@@ -203,12 +203,12 @@ describe("TERC20", async () => {
       await masterAccess.grantRoles(USER1, [TERC20Role]);
       await masterAccess.grantRoles(USER2, [TERC20Role]);
 
-      await token.mint(USER2, wei("100"), { from: USER1 });
+      await token.mintTo(USER2, wei("100"), { from: USER1 });
 
       await token.approve(USER1, wei("100"), { from: USER2 });
 
-      await truffleAssert.reverts(token.burn(USER2, wei("100"), { from: USER1 }), "TERC20: access denied");
-      await truffleAssert.reverts(token.burn(USER2, wei("100"), { from: USER2 }), "TERC20: access denied");
+      await truffleAssert.reverts(token.burnFrom(USER2, wei("100"), { from: USER1 }), "TERC20: access denied");
+      await truffleAssert.reverts(token.burnFrom(USER2, wei("100"), { from: USER2 }), "TERC20: access denied");
     });
 
     it("should not burn tokens due to the permissions (1)", async () => {
@@ -218,13 +218,13 @@ describe("TERC20", async () => {
       await masterAccess.grantRoles(USER1, [TERC20Role]);
       await masterAccess.grantRoles(USER2, [TERC20Role]);
 
-      await token.mint(USER2, wei("100"), { from: USER1 });
+      await token.mintTo(USER2, wei("100"), { from: USER1 });
 
       await token.approve(USER1, wei("100"), { from: USER2 });
 
       await masterAccess.revokeRoles(USER2, [TERC20Role]);
 
-      await truffleAssert.reverts(token.burn(USER2, wei("100"), { from: USER1 }), "TERC20: access denied");
+      await truffleAssert.reverts(token.burnFrom(USER2, wei("100"), { from: USER1 }), "TERC20: access denied");
     });
   });
 
@@ -236,7 +236,7 @@ describe("TERC20", async () => {
       await masterAccess.grantRoles(USER1, [TERC20Role]);
       await masterAccess.grantRoles(USER2, [TERC20Role]);
 
-      await token.mint(USER2, wei("100"), { from: USER1 });
+      await token.mintTo(USER2, wei("100"), { from: USER1 });
 
       await token.transfer(USER1, wei("10"), { from: USER2 });
 
@@ -250,7 +250,7 @@ describe("TERC20", async () => {
       await masterAccess.grantRoles(USER1, [TERC20Role]);
       await masterAccess.grantRoles(USER2, [TERC20Role]);
 
-      await token.mint(USER2, wei("100"), { from: USER1 });
+      await token.mintTo(USER2, wei("100"), { from: USER1 });
 
       await token.approve(USER3, wei("20"), { from: USER2 });
 
@@ -266,7 +266,7 @@ describe("TERC20", async () => {
       await masterAccess.grantRoles(USER1, [TERC20Role]);
       await masterAccess.grantRoles(USER2, [TERC20Role]);
 
-      await token.mint(USER2, wei("100"), { from: USER1 });
+      await token.mintTo(USER2, wei("100"), { from: USER1 });
 
       await masterAccess.revokeRoles(USER2, [TERC20Role]);
 
@@ -285,7 +285,7 @@ describe("TERC20", async () => {
       await masterAccess.grantRoles(USER1, [TERC20Role]);
       await masterAccess.grantRoles(USER2, [TERC20Role]);
 
-      await token.mint(USER2, wei("100"), { from: USER1 });
+      await token.mintTo(USER2, wei("100"), { from: USER1 });
 
       await token.approve(USER3, wei("20"), { from: USER2 });
 

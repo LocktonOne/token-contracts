@@ -10,9 +10,9 @@ interface ITERC20 {
         uint256 totalSupplyCap;
     }
 
-    function mint(address account_, uint256 amount_) external;
+    function mintTo(address account_, uint256 amount_) external;
 
-    function burn(address account_, uint256 amount_) external;
+    function burnFrom(address account_, uint256 amount_) external;
 
     function setMetadata(string calldata metadataURI_) external;
 

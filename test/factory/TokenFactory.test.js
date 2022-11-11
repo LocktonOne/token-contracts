@@ -125,7 +125,7 @@ describe("TokenFactory", async () => {
       assert.equal(await token.uri(), "URI");
       assert.equal(await token.TERC20_RESOURCE(), `TERC20:${token.address.toLowerCase()}`);
 
-      await truffleAssert.reverts(token.mint(OWNER, 1, { from: USER1 }), "TERC20: access denied");
+      await truffleAssert.reverts(token.mintTo(OWNER, 1, { from: USER1 }), "TERC20: access denied");
     });
 
     it("should deploy 2 ERC20", async () => {

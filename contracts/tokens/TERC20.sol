@@ -51,7 +51,7 @@ contract TERC20 is ITERC20, ERC20Upgradeable, AbstractDependant {
         _masterAccess = MasterAccessManagement(registry_.getMasterAccessManagement());
     }
 
-    function mint(address account_, uint256 amount_) external override {
+    function mintTo(address account_, uint256 amount_) external override {
         require(
             totalSupplyCap == 0 || totalSupply() + amount_ <= totalSupplyCap,
             "TERC20: cap exceeded"
@@ -60,7 +60,7 @@ contract TERC20 is ITERC20, ERC20Upgradeable, AbstractDependant {
         _mint(account_, amount_);
     }
 
-    function burn(address account_, uint256 amount_) external override {
+    function burnFrom(address account_, uint256 amount_) external override {
         if (account_ != msg.sender) {
             _spendAllowance(account_, msg.sender, amount_);
         }
