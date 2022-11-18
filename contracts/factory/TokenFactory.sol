@@ -11,6 +11,7 @@ import "@tokene/core-contracts/core/ReviewableRequests.sol";
 import "../interfaces/factory/ITokenFactory.sol";
 
 import "../tokens/TERC20.sol";
+import "../tokens/TERC721.sol";
 import "./TokenRegistry.sol";
 
 contract TokenFactory is ITokenFactory, AbstractPoolFactory {
@@ -28,6 +29,7 @@ contract TokenFactory is ITokenFactory, AbstractPoolFactory {
     TokenRegistry internal _tokenRegistry;
 
     event DeployedERC20(address token);
+    event DeployedERC721(address token);
 
     modifier onlyCreatePermission() {
         _requirePermission(CREATE_PERMISSION);
@@ -65,10 +67,7 @@ contract TokenFactory is ITokenFactory, AbstractPoolFactory {
 
         address tokenProxy_ = _deploy(address(_tokenRegistry), tokenType_);
 
-        string memory tokenResource_ = string.concat(
-            "TERC20:",
-            uint256(uint160(tokenProxy_)).toHexString(20)
-        );
+        string memory tokenResource_ = _getTokenResource(tokenType_, tokenProxy_);
 
         TERC20(tokenProxy_).__TERC20_init(params_, tokenResource_);
 
@@ -76,6 +75,39 @@ contract TokenFactory is ITokenFactory, AbstractPoolFactory {
         _injectDependencies(address(_tokenRegistry), tokenProxy_);
 
         emit DeployedERC20(tokenProxy_);
+    }
+
+    function requestERC721(
+        ITERC721.ConstructorParams calldata params_,
+        string calldata description_
+    ) external override onlyCreatePermission {
+        bytes memory data_ = abi.encodeWithSelector(this.deployERC721.selector, params_);
+
+        _reviewableRequests.createRequest(address(this), data_, "", description_);
+    }
+
+    function deployERC721(
+        ITERC721.ConstructorParams calldata params_
+    ) external override onlyExecutePermission {
+        string memory tokenType_ = _tokenRegistry.TERC721_NAME();
+
+        address tokenProxy_ = _deploy(address(_tokenRegistry), tokenType_);
+
+        string memory tokenResource_ = _getTokenResource(tokenType_, tokenProxy_);
+
+        TERC721(tokenProxy_).__TERC721_init(params_, tokenResource_);
+
+        _register(address(_tokenRegistry), tokenType_, tokenProxy_);
+        _injectDependencies(address(_tokenRegistry), tokenProxy_);
+
+        emit DeployedERC721(tokenProxy_);
+    }
+
+    function _getTokenResource(
+        string memory tokenType_,
+        address tokenProxy_
+    ) internal pure returns (string memory) {
+        return string.concat(tokenType_, ":", uint256(uint160(tokenProxy_)).toHexString(20));
     }
 
     function _requirePermission(string memory permission_) internal view {

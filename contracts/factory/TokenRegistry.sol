@@ -16,6 +16,7 @@ contract TokenRegistry is ITokenRegistry, AbstractPoolContractsRegistry {
     string public constant TOKEN_FACTORY_DEP = "TOKEN_FACTORY";
 
     string public constant TERC20_NAME = "TERC20";
+    string public constant TERC721_NAME = "TERC721";
 
     MasterAccessManagement internal _masterAccess;
     address internal _tokenFactory;

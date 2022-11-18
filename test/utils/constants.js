@@ -13,10 +13,10 @@ const TOKEN_FACTORY_RESOURCE = "TOKEN_FACTORY_RESOURCE";
 const TOKEN_REGISTRY_DEP = "TOKEN_REGISTRY";
 const TOKEN_FACTORY_DEP = "TOKEN_FACTORY";
 
-const DefaultTokenParams = {
+const DefaultTERC20Params = {
   name: "name",
   symbol: "symbol",
-  metadataURI: "URI",
+  contractURI: "URI",
   decimals: 18,
   totalSupplyCap: 0,
 };
@@ -34,5 +34,5 @@ module.exports = {
   TOKEN_FACTORY_RESOURCE,
   TOKEN_REGISTRY_DEP,
   TOKEN_FACTORY_DEP,
-  DefaultTokenParams,
+  DefaultTERC20Params,
 };

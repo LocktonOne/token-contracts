@@ -5,7 +5,7 @@ const {
   SPEND_PERMISSION,
   RECEIVE_PERMISSION,
   CHANGE_METADATA_PERMISSION,
-  DefaultTokenParams,
+  DefaultTERC20Params,
 } = require("../utils/constants");
 
 const Reverter = require("../helpers/reverter");
@@ -72,12 +72,12 @@ describe("TERC20", async () => {
 
   describe("access", () => {
     beforeEach("setup", async () => {
-      await deployTERC20(DefaultTokenParams);
+      await deployTERC20(DefaultTERC20Params);
     });
 
     it("should not initialize twice", async () => {
       await truffleAssert.reverts(
-        token.__TERC20_init(DefaultTokenParams, TERC20Resource),
+        token.__TERC20_init(DefaultTERC20Params, TERC20Resource),
         "Initializable: contract is already initialized"
       );
     });
@@ -92,7 +92,7 @@ describe("TERC20", async () => {
 
   describe("mintTo", () => {
     it("should be able to mint tokens", async () => {
-      await deployTERC20(DefaultTokenParams);
+      await deployTERC20(DefaultTERC20Params);
 
       await masterAccess.addPermissionsToRole(TERC20Role, [TERC20Mint, TERC20Receive], true);
       await masterAccess.grantRoles(USER1, [TERC20Role]);
@@ -109,7 +109,7 @@ describe("TERC20", async () => {
       const tokenParams = {
         name: "name",
         symbol: "symbol",
-        metadataURI: "URI",
+        contractURI: "URI",
         decimals: 18,
         totalSupplyCap: wei("100"),
       };
@@ -131,7 +131,7 @@ describe("TERC20", async () => {
       const tokenParams = {
         name: "name",
         symbol: "symbol",
-        metadataURI: "URI",
+        contractURI: "URI",
         decimals: 18,
         totalSupplyCap: wei("100"),
       };
@@ -146,7 +146,7 @@ describe("TERC20", async () => {
     });
 
     it("should not be able to mint tokens due to permissions (1)", async () => {
-      await deployTERC20(DefaultTokenParams);
+      await deployTERC20(DefaultTERC20Params);
 
       await masterAccess.addPermissionsToRole(TERC20Role, [TERC20Receive], true);
       await masterAccess.grantRoles(USER2, [TERC20Role]);
@@ -155,7 +155,7 @@ describe("TERC20", async () => {
     });
 
     it("should not be able to mint tokens due to permissions (2)", async () => {
-      await deployTERC20(DefaultTokenParams);
+      await deployTERC20(DefaultTERC20Params);
 
       await masterAccess.addPermissionsToRole(TERC20Role, [TERC20Mint], true);
       await masterAccess.grantRoles(USER1, [TERC20Role]);
@@ -166,7 +166,7 @@ describe("TERC20", async () => {
 
   describe("burnFrom", () => {
     it("should be able to burn tokens", async () => {
-      await deployTERC20(DefaultTokenParams);
+      await deployTERC20(DefaultTERC20Params);
 
       await masterAccess.addPermissionsToRole(TERC20Role, [TERC20Mint, TERC20Receive, TERC20Burn], true);
       await masterAccess.grantRoles(USER1, [TERC20Role]);
@@ -179,7 +179,7 @@ describe("TERC20", async () => {
     });
 
     it("should be able to burn approved tokens", async () => {
-      await deployTERC20(DefaultTokenParams);
+      await deployTERC20(DefaultTERC20Params);
 
       await masterAccess.addPermissionsToRole(TERC20Role, [TERC20Mint, TERC20Receive, TERC20Burn], true);
       await masterAccess.grantRoles(USER1, [TERC20Role]);
@@ -197,7 +197,7 @@ describe("TERC20", async () => {
     });
 
     it("should not burn tokens due to the permissions (1)", async () => {
-      await deployTERC20(DefaultTokenParams);
+      await deployTERC20(DefaultTERC20Params);
 
       await masterAccess.addPermissionsToRole(TERC20Role, [TERC20Mint, TERC20Receive], true);
       await masterAccess.grantRoles(USER1, [TERC20Role]);
@@ -212,7 +212,7 @@ describe("TERC20", async () => {
     });
 
     it("should not burn tokens due to the permissions (1)", async () => {
-      await deployTERC20(DefaultTokenParams);
+      await deployTERC20(DefaultTERC20Params);
 
       await masterAccess.addPermissionsToRole(TERC20Role, [TERC20Mint, TERC20Receive, TERC20Burn], true);
       await masterAccess.grantRoles(USER1, [TERC20Role]);
@@ -230,7 +230,7 @@ describe("TERC20", async () => {
 
   describe("transfer", () => {
     it("should be able to transfer tokens", async () => {
-      await deployTERC20(DefaultTokenParams);
+      await deployTERC20(DefaultTERC20Params);
 
       await masterAccess.addPermissionsToRole(TERC20Role, [TERC20Mint, TERC20Receive, TERC20Spend], true);
       await masterAccess.grantRoles(USER1, [TERC20Role]);
@@ -244,7 +244,7 @@ describe("TERC20", async () => {
     });
 
     it("should be able to transfer from tokens", async () => {
-      await deployTERC20(DefaultTokenParams);
+      await deployTERC20(DefaultTERC20Params);
 
       await masterAccess.addPermissionsToRole(TERC20Role, [TERC20Mint, TERC20Receive, TERC20Spend], true);
       await masterAccess.grantRoles(USER1, [TERC20Role]);
@@ -260,7 +260,7 @@ describe("TERC20", async () => {
     });
 
     it("should not transfer tokens due to permissions", async () => {
-      await deployTERC20(DefaultTokenParams);
+      await deployTERC20(DefaultTERC20Params);
 
       await masterAccess.addPermissionsToRole(TERC20Role, [TERC20Mint, TERC20Receive, TERC20Spend], true);
       await masterAccess.grantRoles(USER1, [TERC20Role]);
@@ -279,7 +279,7 @@ describe("TERC20", async () => {
     });
 
     it("should not transfer from due to permissions", async () => {
-      await deployTERC20(DefaultTokenParams);
+      await deployTERC20(DefaultTERC20Params);
 
       await masterAccess.addPermissionsToRole(TERC20Role, [TERC20Mint, TERC20Receive, TERC20Spend], true);
       await masterAccess.grantRoles(USER1, [TERC20Role]);
@@ -306,24 +306,24 @@ describe("TERC20", async () => {
     });
   });
 
-  describe("setMetadata", () => {
+  describe("setContractMetadata", () => {
     it("should set new metadata", async () => {
-      await deployTERC20(DefaultTokenParams);
+      await deployTERC20(DefaultTERC20Params);
 
       await masterAccess.addPermissionsToRole(TERC20Role, [TERC20ChangeMetadata], true);
       await masterAccess.grantRoles(USER1, [TERC20Role]);
 
-      assert.equal(await token.uri(), DefaultTokenParams.metadataURI);
+      assert.equal(await token.contractURI(), DefaultTERC20Params.contractURI);
 
-      await token.setMetadata("NEW_URI", { from: USER1 });
+      await token.setContractMetadata("NEW_URI", { from: USER1 });
 
-      assert.equal(await token.uri(), "NEW_URI");
+      assert.equal(await token.contractURI(), "NEW_URI");
     });
 
     it("should not set metadata due to permissions", async () => {
-      await deployTERC20(DefaultTokenParams);
+      await deployTERC20(DefaultTERC20Params);
 
-      await truffleAssert.reverts(token.setMetadata("NEW_URI", { from: USER1 }), "TERC20: access denied");
+      await truffleAssert.reverts(token.setContractMetadata("NEW_URI", { from: USER1 }), "TERC20: access denied");
     });
   });
 });

@@ -6,7 +6,7 @@ const {
   TOKEN_FACTORY_RESOURCE,
   TOKEN_REGISTRY_DEP,
   TOKEN_FACTORY_DEP,
-  DefaultTokenParams,
+  DefaultTERC20Params,
 } = require("../utils/constants");
 
 const Reverter = require("../helpers/reverter");
@@ -94,7 +94,7 @@ describe("TokenFactory", async () => {
       await masterAccess.addPermissionsToRole(TokenFactoryRole, [TokenFactoryCreate], true);
       await masterAccess.grantRoles(USER1, [TokenFactoryRole]);
 
-      await tokenFactory.requestERC20(DefaultTokenParams, description, { from: USER1 });
+      await tokenFactory.requestERC20(DefaultTERC20Params, description, { from: USER1 });
 
       const request = await reviewableRequests.requests(0);
 
@@ -104,7 +104,7 @@ describe("TokenFactory", async () => {
 
     it("should not request ERC20 without permissions", async () => {
       await truffleAssert.reverts(
-        tokenFactory.requestERC20(DefaultTokenParams, description, { from: USER1 }),
+        tokenFactory.requestERC20(DefaultTERC20Params, description, { from: USER1 }),
         "TokenFactory: access denied"
       );
     });
@@ -115,14 +115,14 @@ describe("TokenFactory", async () => {
       await masterAccess.addPermissionsToRole(TokenFactoryRole, [TokenFactoryCreate], true);
       await masterAccess.grantRoles(USER1, [TokenFactoryRole]);
 
-      await tokenFactory.requestERC20(DefaultTokenParams, description, { from: USER1 });
+      await tokenFactory.requestERC20(DefaultTERC20Params, description, { from: USER1 });
 
       await reviewableRequests.acceptRequest(0);
 
       const token = await TERC20.at((await tokenRegistry.listPools(await tokenRegistry.TERC20_NAME(), 0, 1))[0]);
 
       assert.equal(await token.decimals(), "18");
-      assert.equal(await token.uri(), "URI");
+      assert.equal(await token.contractURI(), "URI");
       assert.equal(await token.TERC20_RESOURCE(), `TERC20:${token.address.toLowerCase()}`);
 
       await truffleAssert.reverts(token.mintTo(OWNER, 1, { from: USER1 }), "TERC20: access denied");
@@ -132,8 +132,8 @@ describe("TokenFactory", async () => {
       await masterAccess.addPermissionsToRole(TokenFactoryRole, [TokenFactoryCreate], true);
       await masterAccess.grantRoles(USER1, [TokenFactoryRole]);
 
-      await tokenFactory.requestERC20(DefaultTokenParams, description, { from: USER1 });
-      await tokenFactory.requestERC20(DefaultTokenParams, description, { from: USER1 });
+      await tokenFactory.requestERC20(DefaultTERC20Params, description, { from: USER1 });
+      await tokenFactory.requestERC20(DefaultTERC20Params, description, { from: USER1 });
 
       await reviewableRequests.acceptRequest(0);
       await reviewableRequests.acceptRequest(1);
@@ -149,14 +149,14 @@ describe("TokenFactory", async () => {
       await masterAccess.addPermissionsToRole(TokenFactoryRole, [TokenFactoryCreate], true);
       await masterAccess.grantRoles(USER1, [TokenFactoryRole]);
 
-      await tokenFactory.requestERC20(DefaultTokenParams, description, { from: USER1 });
+      await tokenFactory.requestERC20(DefaultTERC20Params, description, { from: USER1 });
 
       await truffleAssert.passes(reviewableRequests.rejectRequest(0), "pass");
     });
 
     it("should not deploy ERC20 due to permissions", async () => {
       await truffleAssert.reverts(
-        tokenFactory.deployERC20(DefaultTokenParams, { from: USER1 }),
+        tokenFactory.deployERC20(DefaultTERC20Params, { from: USER1 }),
         "TokenFactory: access denied"
       );
     });
