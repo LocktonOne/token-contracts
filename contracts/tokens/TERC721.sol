@@ -62,6 +62,11 @@ contract TERC721 is
         uint256 tokenId_,
         string calldata tokenURI_
     ) external override {
+        require(
+            totalSupplyCap == 0 || totalSupply() + 1 <= totalSupplyCap,
+            "TERC721: cap exceeded"
+        );
+
         _mint(receiver_, tokenId_);
         _setTokenURI(tokenId_, tokenURI_);
     }
