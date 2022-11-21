@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.17;
 
-interface ITERC20 {
+import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+
+interface ITERC20 is IERC20Upgradeable {
     struct ConstructorParams {
         string name;
         string symbol;

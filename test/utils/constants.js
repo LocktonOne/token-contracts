@@ -21,6 +21,14 @@ const DefaultTERC20Params = {
   totalSupplyCap: 0,
 };
 
+const DefaultTERC721Params = {
+  name: "name",
+  symbol: "symbol",
+  contractURI: "URI",
+  baseURI: "BASE_URI",
+  totalSupplyCap: 0,
+};
+
 module.exports = {
   CREATE_PERMISSION,
   EXECUTE_PERMISSION,
@@ -35,4 +43,5 @@ module.exports = {
   TOKEN_REGISTRY_DEP,
   TOKEN_FACTORY_DEP,
   DefaultTERC20Params,
+  DefaultTERC721Params,
 };

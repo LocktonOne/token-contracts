@@ -12,8 +12,8 @@ const {
 const Registry = artifacts.require("MasterContractsRegistry");
 const MasterAccessManagement = artifacts.require("MasterAccessManagement");
 
-module.exports = async () => {
-  const registry = await Registry.at(process.env.MASTER_CONTRACTS_REGISTRY);
+module.exports = async (deployer) => {
+  const registry = await Registry.at(deployer.masterContractsRegistry);
   const masterAccess = await MasterAccessManagement.at(await registry.getMasterAccessManagement());
 
   const reviewableRequestsAddress = await registry.getReviewableRequests();

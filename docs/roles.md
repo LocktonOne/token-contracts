@@ -8,6 +8,7 @@
 - `TOKEN_FACTORY_RESOURCE` - The TokenFactory resource
 - `TOKEN_REGISTRY_RESOURCE` - The TokenRegistry resource
 - `TERC20:<address>` - The TERC20 resources
+- `TERC721:<address>` - The TERC721 resources
 
 ### Permissions
 

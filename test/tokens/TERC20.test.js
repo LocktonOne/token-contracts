@@ -211,7 +211,7 @@ describe("TERC20", async () => {
       await truffleAssert.reverts(token.burnFrom(USER2, wei("100"), { from: USER2 }), "TERC20: access denied");
     });
 
-    it("should not burn tokens due to the permissions (1)", async () => {
+    it("should not burn tokens due to the permissions (2)", async () => {
       await deployTERC20(DefaultTERC20Params);
 
       await masterAccess.addPermissionsToRole(TERC20Role, [TERC20Mint, TERC20Receive, TERC20Burn], true);
@@ -259,7 +259,7 @@ describe("TERC20", async () => {
       assert.equal(await token.balanceOf(USER1), wei("20"));
     });
 
-    it("should not transfer tokens due to permissions", async () => {
+    it("should not transfer tokens due to permissions (1)", async () => {
       await deployTERC20(DefaultTERC20Params);
 
       await masterAccess.addPermissionsToRole(TERC20Role, [TERC20Mint, TERC20Receive, TERC20Spend], true);
@@ -278,7 +278,7 @@ describe("TERC20", async () => {
       await truffleAssert.reverts(token.transfer(USER1, wei("10"), { from: USER2 }), "TERC20: access denied");
     });
 
-    it("should not transfer from due to permissions", async () => {
+    it("should not transfer from due to permissions (2)", async () => {
       await deployTERC20(DefaultTERC20Params);
 
       await masterAccess.addPermissionsToRole(TERC20Role, [TERC20Mint, TERC20Receive, TERC20Spend], true);
@@ -307,7 +307,7 @@ describe("TERC20", async () => {
   });
 
   describe("setContractMetadata", () => {
-    it("should set new metadata", async () => {
+    it("should set new contract metadata", async () => {
       await deployTERC20(DefaultTERC20Params);
 
       await masterAccess.addPermissionsToRole(TERC20Role, [TERC20ChangeMetadata], true);
@@ -320,7 +320,7 @@ describe("TERC20", async () => {
       assert.equal(await token.contractURI(), "NEW_URI");
     });
 
-    it("should not set metadata due to permissions", async () => {
+    it("should not set contract metadata due to permissions", async () => {
       await deployTERC20(DefaultTERC20Params);
 
       await truffleAssert.reverts(token.setContractMetadata("NEW_URI", { from: USER1 }), "TERC20: access denied");

@@ -5,7 +5,7 @@ const Registry = artifacts.require("MasterContractsRegistry");
 const TokenRegistry = artifacts.require("TokenRegistry");
 
 module.exports = async (deployer) => {
-  const registry = await Registry.at(process.env.MASTER_CONTRACTS_REGISTRY);
+  const registry = await Registry.at(deployer.masterContractsRegistry);
 
   const tokenRegistry = await deployer.deploy(TokenRegistry);
 

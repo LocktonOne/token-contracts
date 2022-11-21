@@ -74,7 +74,8 @@ contract TERC721 is
     function burnFrom(address payer_, uint256 tokenId_) external override {
         require(
             ownerOf(tokenId_) == payer_ &&
-                (getApproved(tokenId_) == msg.sender || isApprovedForAll(payer_, msg.sender)),
+                (payer_ == msg.sender ||
+                    (getApproved(tokenId_) == msg.sender || isApprovedForAll(payer_, msg.sender))),
             "TERC721: not approved"
         );
 
@@ -105,8 +106,13 @@ contract TERC721 is
 
     function supportsInterface(
         bytes4 interfaceId
-    ) public view override(ERC721EnumerableUpgradeable, ERC721Upgradeable) returns (bool) {
-        return super.supportsInterface(interfaceId);
+    )
+        public
+        view
+        override(ERC721EnumerableUpgradeable, ERC721Upgradeable, IERC165Upgradeable)
+        returns (bool)
+    {
+        return interfaceId == type(ITERC721).interfaceId || super.supportsInterface(interfaceId);
     }
 
     function _burn(
