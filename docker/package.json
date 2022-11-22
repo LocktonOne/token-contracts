@@ -1,0 +1,40 @@
+{
+  "name": "tokene",
+  "version": "1.1.0",
+  "license": "MIT",
+  "author": "Distributed Lab",
+  "description": "The TokenE operating system on top of EVM by Distributed Lab",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/tokene/token-factory-contracts"
+  },
+  "keywords": [
+    "solidity",
+    "ethereum",
+    "smartcontracts",
+    "tokene",
+    "distributedlab"
+  ],
+  "scripts": {
+    "compile": "npx hardhat compile --force",
+    "deploy-dev": "npm run compile && npx hardhat run deploy/runners/deployer/migrations.js --network dev"
+  },
+  "dependencies": {
+    "@tokene/core-contracts": "^1.0.1",
+    "@dlsl/dev-modules": "1.7.4",
+    "@openzeppelin/contracts": "4.5.0",
+    "@openzeppelin/contracts-upgradeable": "4.5.0",
+    "dotenv": "^10.0.0",
+    "hardhat": "^2.12.0",
+    "node-vault": "^0.9.22",
+    "solc": "0.8.17"
+  },
+  "devDependencies": {
+    "@nomiclabs/hardhat-truffle5": "^2.0.1",
+    "@nomiclabs/hardhat-web3": "^2.0.0",
+    "@truffle/deployer": "3.2.56",
+    "@truffle/reporters": "1.1.2",
+    "bignumber.js": "^9.0.1",
+    "web3": "^1.7.5"
+  }
+}
