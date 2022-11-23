@@ -28,8 +28,8 @@ contract TokenFactory is ITokenFactory, AbstractPoolFactory {
     ReviewableRequests internal _reviewableRequests;
     TokenRegistry internal _tokenRegistry;
 
-    event DeployedERC20(address token);
-    event DeployedERC721(address token);
+    event DeployedTERC20(address token);
+    event DeployedTERC721(address token);
 
     modifier onlyCreatePermission() {
         _requirePermission(CREATE_PERMISSION);
@@ -51,16 +51,16 @@ contract TokenFactory is ITokenFactory, AbstractPoolFactory {
         _tokenRegistry = TokenRegistry(registry_.getContract(TOKEN_REGISTRY_DEP));
     }
 
-    function requestERC20(
+    function requestTERC20(
         ITERC20.ConstructorParams calldata params_,
         string calldata description_
     ) external override onlyCreatePermission {
-        bytes memory data_ = abi.encodeWithSelector(this.deployERC20.selector, params_);
+        bytes memory data_ = abi.encodeWithSelector(this.deployTERC20.selector, params_);
 
         _reviewableRequests.createRequest(address(this), data_, "", description_);
     }
 
-    function deployERC20(
+    function deployTERC20(
         ITERC20.ConstructorParams calldata params_
     ) external override onlyExecutePermission {
         string memory tokenType_ = _tokenRegistry.TERC20_NAME();
@@ -74,19 +74,19 @@ contract TokenFactory is ITokenFactory, AbstractPoolFactory {
         _register(address(_tokenRegistry), tokenType_, tokenProxy_);
         _injectDependencies(address(_tokenRegistry), tokenProxy_);
 
-        emit DeployedERC20(tokenProxy_);
+        emit DeployedTERC20(tokenProxy_);
     }
 
-    function requestERC721(
+    function requestTERC721(
         ITERC721.ConstructorParams calldata params_,
         string calldata description_
     ) external override onlyCreatePermission {
-        bytes memory data_ = abi.encodeWithSelector(this.deployERC721.selector, params_);
+        bytes memory data_ = abi.encodeWithSelector(this.deployTERC721.selector, params_);
 
         _reviewableRequests.createRequest(address(this), data_, "", description_);
     }
 
-    function deployERC721(
+    function deployTERC721(
         ITERC721.ConstructorParams calldata params_
     ) external override onlyExecutePermission {
         string memory tokenType_ = _tokenRegistry.TERC721_NAME();
@@ -100,7 +100,7 @@ contract TokenFactory is ITokenFactory, AbstractPoolFactory {
         _register(address(_tokenRegistry), tokenType_, tokenProxy_);
         _injectDependencies(address(_tokenRegistry), tokenProxy_);
 
-        emit DeployedERC721(tokenProxy_);
+        emit DeployedTERC721(tokenProxy_);
     }
 
     function _getTokenResource(

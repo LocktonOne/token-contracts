@@ -95,13 +95,13 @@ describe("TokenFactory", async () => {
     });
   });
 
-  describe("ERC20", () => {
-    describe("requestERC20", () => {
-      it("should request ERC20 deployment", async () => {
+  describe("TERC20", () => {
+    describe("requestTERC20", () => {
+      it("should request TERC20 deployment", async () => {
         await masterAccess.addPermissionsToRole(TokenFactoryRole, [TokenFactoryCreate], true);
         await masterAccess.grantRoles(USER1, [TokenFactoryRole]);
 
-        await tokenFactory.requestERC20(DefaultTERC20Params, description, { from: USER1 });
+        await tokenFactory.requestTERC20(DefaultTERC20Params, description, { from: USER1 });
 
         const request = await reviewableRequests.requests(0);
 
@@ -109,20 +109,20 @@ describe("TokenFactory", async () => {
         assert.equal(request.executor, tokenFactory.address);
       });
 
-      it("should not request ERC20 without permissions", async () => {
+      it("should not request TERC20 without permissions", async () => {
         await truffleAssert.reverts(
-          tokenFactory.requestERC20(DefaultTERC20Params, description, { from: USER1 }),
+          tokenFactory.requestTERC20(DefaultTERC20Params, description, { from: USER1 }),
           "TokenFactory: access denied"
         );
       });
     });
 
-    describe("deployERC20", () => {
-      it("should deploy ERC20", async () => {
+    describe("deployTERC20", () => {
+      it("should deploy TERC20", async () => {
         await masterAccess.addPermissionsToRole(TokenFactoryRole, [TokenFactoryCreate], true);
         await masterAccess.grantRoles(USER1, [TokenFactoryRole]);
 
-        await tokenFactory.requestERC20(DefaultTERC20Params, description, { from: USER1 });
+        await tokenFactory.requestTERC20(DefaultTERC20Params, description, { from: USER1 });
 
         await reviewableRequests.acceptRequest(0);
 
@@ -135,12 +135,12 @@ describe("TokenFactory", async () => {
         await truffleAssert.reverts(token.mintTo(OWNER, 1, { from: USER1 }), "TERC20: access denied");
       });
 
-      it("should deploy 2 ERC20", async () => {
+      it("should deploy 2 TERC20", async () => {
         await masterAccess.addPermissionsToRole(TokenFactoryRole, [TokenFactoryCreate], true);
         await masterAccess.grantRoles(USER1, [TokenFactoryRole]);
 
-        await tokenFactory.requestERC20(DefaultTERC20Params, description, { from: USER1 });
-        await tokenFactory.requestERC20(DefaultTERC20Params, description, { from: USER1 });
+        await tokenFactory.requestTERC20(DefaultTERC20Params, description, { from: USER1 });
+        await tokenFactory.requestTERC20(DefaultTERC20Params, description, { from: USER1 });
 
         await reviewableRequests.acceptRequest(0);
         await reviewableRequests.acceptRequest(1);
@@ -152,31 +152,31 @@ describe("TokenFactory", async () => {
         assert.equal(await token2.TERC20_RESOURCE(), `TERC20:${token2.address.toLowerCase()}`);
       });
 
-      it("should not deploy ERC20", async () => {
+      it("should not deploy TERC20", async () => {
         await masterAccess.addPermissionsToRole(TokenFactoryRole, [TokenFactoryCreate], true);
         await masterAccess.grantRoles(USER1, [TokenFactoryRole]);
 
-        await tokenFactory.requestERC20(DefaultTERC20Params, description, { from: USER1 });
+        await tokenFactory.requestTERC20(DefaultTERC20Params, description, { from: USER1 });
 
         await truffleAssert.passes(reviewableRequests.rejectRequest(0), "pass");
       });
 
-      it("should not deploy ERC20 due to permissions", async () => {
+      it("should not deploy TERC20 due to permissions", async () => {
         await truffleAssert.reverts(
-          tokenFactory.deployERC20(DefaultTERC20Params, { from: USER1 }),
+          tokenFactory.deployTERC20(DefaultTERC20Params, { from: USER1 }),
           "TokenFactory: access denied"
         );
       });
     });
   });
 
-  describe("ERC721", () => {
-    describe("requestERC721", () => {
-      it("should request ERC721 deployment", async () => {
+  describe("TERC721", () => {
+    describe("requestTERC721", () => {
+      it("should request TERC721 deployment", async () => {
         await masterAccess.addPermissionsToRole(TokenFactoryRole, [TokenFactoryCreate], true);
         await masterAccess.grantRoles(USER1, [TokenFactoryRole]);
 
-        await tokenFactory.requestERC721(DefaultTERC721Params, description, { from: USER1 });
+        await tokenFactory.requestTERC721(DefaultTERC721Params, description, { from: USER1 });
 
         const request = await reviewableRequests.requests(0);
 
@@ -184,20 +184,20 @@ describe("TokenFactory", async () => {
         assert.equal(request.executor, tokenFactory.address);
       });
 
-      it("should not request ERC721 without permissions", async () => {
+      it("should not request TERC721 without permissions", async () => {
         await truffleAssert.reverts(
-          tokenFactory.requestERC721(DefaultTERC721Params, description, { from: USER1 }),
+          tokenFactory.requestTERC721(DefaultTERC721Params, description, { from: USER1 }),
           "TokenFactory: access denied"
         );
       });
     });
 
-    describe("deployERC721", () => {
-      it("should deploy ERC721", async () => {
+    describe("deployTERC721", () => {
+      it("should deploy TERC721", async () => {
         await masterAccess.addPermissionsToRole(TokenFactoryRole, [TokenFactoryCreate], true);
         await masterAccess.grantRoles(USER1, [TokenFactoryRole]);
 
-        await tokenFactory.requestERC721(DefaultTERC721Params, description, { from: USER1 });
+        await tokenFactory.requestTERC721(DefaultTERC721Params, description, { from: USER1 });
 
         await reviewableRequests.acceptRequest(0);
 
@@ -210,12 +210,12 @@ describe("TokenFactory", async () => {
         await truffleAssert.reverts(token.mintTo(OWNER, 1, "1", { from: USER1 }), "TERC721: access denied");
       });
 
-      it("should deploy 2 ERC721", async () => {
+      it("should deploy 2 TERC721", async () => {
         await masterAccess.addPermissionsToRole(TokenFactoryRole, [TokenFactoryCreate], true);
         await masterAccess.grantRoles(USER1, [TokenFactoryRole]);
 
-        await tokenFactory.requestERC721(DefaultTERC721Params, description, { from: USER1 });
-        await tokenFactory.requestERC721(DefaultTERC721Params, description, { from: USER1 });
+        await tokenFactory.requestTERC721(DefaultTERC721Params, description, { from: USER1 });
+        await tokenFactory.requestTERC721(DefaultTERC721Params, description, { from: USER1 });
 
         await reviewableRequests.acceptRequest(0);
         await reviewableRequests.acceptRequest(1);
@@ -227,18 +227,18 @@ describe("TokenFactory", async () => {
         assert.equal(await token2.TERC721_RESOURCE(), `TERC721:${token2.address.toLowerCase()}`);
       });
 
-      it("should not deploy ERC721", async () => {
+      it("should not deploy TERC721", async () => {
         await masterAccess.addPermissionsToRole(TokenFactoryRole, [TokenFactoryCreate], true);
         await masterAccess.grantRoles(USER1, [TokenFactoryRole]);
 
-        await tokenFactory.requestERC721(DefaultTERC721Params, description, { from: USER1 });
+        await tokenFactory.requestTERC721(DefaultTERC721Params, description, { from: USER1 });
 
         await truffleAssert.passes(reviewableRequests.rejectRequest(0), "pass");
       });
 
-      it("should not deploy ERC721 due to permissions", async () => {
+      it("should not deploy TERC721 due to permissions", async () => {
         await truffleAssert.reverts(
-          tokenFactory.deployERC721(DefaultTERC721Params, { from: USER1 }),
+          tokenFactory.deployTERC721(DefaultTERC721Params, { from: USER1 }),
           "TokenFactory: access denied"
         );
       });

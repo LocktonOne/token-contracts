@@ -5,17 +5,17 @@ import "../tokens/ITERC20.sol";
 import "../tokens/ITERC721.sol";
 
 interface ITokenFactory {
-    function requestERC20(
+    function requestTERC20(
         ITERC20.ConstructorParams calldata params_,
         string calldata description_
     ) external;
 
-    function deployERC20(ITERC20.ConstructorParams calldata params_) external;
+    function deployTERC20(ITERC20.ConstructorParams calldata params_) external;
 
-    function requestERC721(
+    function requestTERC721(
         ITERC721.ConstructorParams calldata params_,
         string calldata description_
     ) external;
 
-    function deployERC721(ITERC721.ConstructorParams calldata params_) external;
+    function deployTERC721(ITERC721.ConstructorParams calldata params_) external;
 }
