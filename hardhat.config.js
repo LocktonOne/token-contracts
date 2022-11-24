@@ -28,9 +28,9 @@ module.exports = {
     hardhat: {
       initialDate: "1970-01-01T00:00:00Z",
     },
-    localhost: {
-      url: "http://127.0.0.1:8545",
-      initialDate: "1970-01-01T00:00:00Z",
+    dev: {
+      url: `${process.env.DEV_RPC_ENDPOINT}`,
+      accounts: privateKey(),
       gasMultiplier: 1.2,
     },
     goerli: {
@@ -56,7 +56,7 @@ module.exports = {
     },
   },
   solidity: {
-    version: "0.8.9",
+    version: "0.8.17",
     settings: {
       optimizer: {
         enabled: true,
