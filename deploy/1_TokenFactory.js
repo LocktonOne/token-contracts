@@ -1,5 +1,5 @@
-const { getConfigJson } = require("../config/config-getter");
-const { logTransaction } = require("../runners/logger/logger");
+const { logTransaction } = require("@dlsl/hardhat-migrate");
+const { getConfigJson } = require("./config/config-getter");
 const { TOKEN_FACTORY_DEP } = require("./utils/constants");
 
 const Registry = artifacts.require("MasterContractsRegistry");
@@ -8,11 +8,11 @@ const TokenFactory = artifacts.require("TokenFactory");
 module.exports = async (deployer) => {
   const config = await getConfigJson();
 
-  if (config.MasterContractsRegistry == undefined) {
+  if (config.addresses == undefined || config.addresses.MasterContractsRegistry == undefined) {
     throw new Error(`invalid config fetched`);
   }
 
-  deployer.masterContractsRegistry = config.MasterContractsRegistry;
+  deployer.masterContractsRegistry = config.addresses.MasterContractsRegistry;
 
   const registry = await Registry.at(deployer.masterContractsRegistry);
 

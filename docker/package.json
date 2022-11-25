@@ -6,12 +6,12 @@
   "description": "The TokenE operating system on top of EVM by Distributed Lab",
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/tokene/token-factory-contracts"
+    "url": "https://gitlab.com/tokene/token-factory/token-factory-contracts"
   },
   "keywords": [
     "solidity",
     "ethereum",
-    "smartcontracts",
+    "smart-contracts",
     "tokene",
     "distributedlab"
   ],

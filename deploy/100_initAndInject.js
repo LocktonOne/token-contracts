@@ -1,4 +1,4 @@
-const { logTransaction } = require("../runners/logger/logger");
+const { logTransaction } = require("@dlsl/hardhat-migrate");
 const { TOKEN_FACTORY_DEP, TOKEN_REGISTRY_DEP } = require("./utils/constants");
 
 const Registry = artifacts.require("MasterContractsRegistry");
