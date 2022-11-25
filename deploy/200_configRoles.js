@@ -1,4 +1,4 @@
-const { logTransaction } = require("../runners/logger/logger");
+const { logTransaction } = require("@dlsl/hardhat-migrate");
 const {
   REVIEWABLE_REQUESTS_CREATOR,
   TOKEN_FACTORY_EXECUTOR,
