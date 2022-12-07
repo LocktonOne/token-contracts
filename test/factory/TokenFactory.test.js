@@ -107,6 +107,7 @@ describe("TokenFactory", async () => {
 
         assert.equal(request.creator, tokenFactory.address);
         assert.equal(request.executor, tokenFactory.address);
+        assert.equal(request.misc, "TERC20");
       });
 
       it("should not request TERC20 without permissions", async () => {
@@ -182,6 +183,7 @@ describe("TokenFactory", async () => {
 
         assert.equal(request.creator, tokenFactory.address);
         assert.equal(request.executor, tokenFactory.address);
+        assert.equal(request.misc, "TERC721");
       });
 
       it("should not request TERC721 without permissions", async () => {

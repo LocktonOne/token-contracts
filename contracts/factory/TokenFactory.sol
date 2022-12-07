@@ -57,7 +57,7 @@ contract TokenFactory is ITokenFactory, AbstractPoolFactory {
     ) external override onlyCreatePermission {
         bytes memory data_ = abi.encodeWithSelector(this.deployTERC20.selector, params_);
 
-        _reviewableRequests.createRequest(address(this), data_, "", description_);
+        _reviewableRequests.createRequest(address(this), data_, "", "TERC20", description_);
     }
 
     function deployTERC20(
@@ -83,7 +83,7 @@ contract TokenFactory is ITokenFactory, AbstractPoolFactory {
     ) external override onlyCreatePermission {
         bytes memory data_ = abi.encodeWithSelector(this.deployTERC721.selector, params_);
 
-        _reviewableRequests.createRequest(address(this), data_, "", description_);
+        _reviewableRequests.createRequest(address(this), data_, "", "TERC721", description_);
     }
 
     function deployTERC721(
