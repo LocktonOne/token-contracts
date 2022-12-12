@@ -28,8 +28,8 @@ contract TokenFactory is ITokenFactory, AbstractPoolFactory {
     ReviewableRequests internal _reviewableRequests;
     TokenRegistry internal _tokenRegistry;
 
-    event DeployedTERC20(address token);
-    event DeployedTERC721(address token);
+    event DeployedTERC20(address token, ITERC20.ConstructorParams);
+    event DeployedTERC721(address token, ITERC721.ConstructorParams);
 
     modifier onlyCreatePermission() {
         _requirePermission(CREATE_PERMISSION);
@@ -74,7 +74,7 @@ contract TokenFactory is ITokenFactory, AbstractPoolFactory {
         _register(address(_tokenRegistry), tokenType_, tokenProxy_);
         _injectDependencies(address(_tokenRegistry), tokenProxy_);
 
-        emit DeployedTERC20(tokenProxy_);
+        emit DeployedTERC20(tokenProxy_, params_);
     }
 
     function requestTERC721(
@@ -100,7 +100,7 @@ contract TokenFactory is ITokenFactory, AbstractPoolFactory {
         _register(address(_tokenRegistry), tokenType_, tokenProxy_);
         _injectDependencies(address(_tokenRegistry), tokenProxy_);
 
-        emit DeployedTERC721(tokenProxy_);
+        emit DeployedTERC721(tokenProxy_, params_);
     }
 
     function _getTokenResource(
