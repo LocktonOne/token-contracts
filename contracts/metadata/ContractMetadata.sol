@@ -10,6 +10,8 @@ abstract contract ContractMetadata is IContractMetadata, Initializable {
 
     string private _contractURI;
 
+    event ContractURIChanged(string contractURI);
+
     function __ContractMetadata_init(string memory contractURI_) internal onlyInitializing {
         _contractURI = contractURI_;
     }
@@ -22,6 +24,8 @@ abstract contract ContractMetadata is IContractMetadata, Initializable {
         string calldata contractURI_
     ) external override onlyChangeMetadataPermission {
         _contractURI = contractURI_;
+
+        emit ContractURIChanged(contractURI_);
     }
 
     function contractURI() external view override returns (string memory) {
