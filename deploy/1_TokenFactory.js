@@ -13,6 +13,7 @@ module.exports = async (deployer) => {
   }
 
   deployer.masterContractsRegistry = config.addresses.MasterContractsRegistry;
+  deployer.startMigrationsBlock = await web3.eth.getBlockNumber();
 
   const registry = await Registry.at(deployer.masterContractsRegistry);
 
