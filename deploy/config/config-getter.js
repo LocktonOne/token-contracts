@@ -5,7 +5,7 @@ async function getConfigJson() {
     token: process.env.VAULT_TOKEN,
   });
 
-  const responseBody = (await vault.read(process.env.VAULT_CONFIG_PATH)).data;
+  const responseBody = (await vault.read(process.env.VAULT_FETCH_CONFIG_PATH)).data;
 
   return responseBody.data;
 }

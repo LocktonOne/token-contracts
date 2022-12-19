@@ -1,4 +1,4 @@
-const { getConfigJson } = require("./config/config-getter");
+const { getConfigJson } = require("./config/config-parser");
 
 const vault = require("node-vault")({
   apiVersion: "v1",
@@ -7,10 +7,9 @@ const vault = require("node-vault")({
 });
 
 const Registry = artifacts.require("MasterContractsRegistry");
-const ERC1967Proxy = artifacts.require("ERC1967Proxy");
 
 module.exports = async (deployer) => {
-  const registry = await Registry.at((await ERC1967Proxy.deployed()).address);
+  const registry = await Registry.at(deployer.masterContractsRegistry);
   const tokenFactory = await registry.getTokenFactory();
 
   const projectName = getConfigJson().projectName;
