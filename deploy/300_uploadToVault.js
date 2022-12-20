@@ -1,4 +1,5 @@
 const { getConfigJson } = require("./config/config-parser");
+const { TOKEN_FACTORY_DEP } = require("./utils/constants");
 
 const vault = require("node-vault")({
   apiVersion: "v1",
@@ -10,7 +11,7 @@ const Registry = artifacts.require("MasterContractsRegistry");
 
 module.exports = async (deployer) => {
   const registry = await Registry.at(deployer.masterContractsRegistry);
-  const tokenFactory = await registry.getTokenFactory();
+  const tokenFactory = await registry.getContract(TOKEN_FACTORY_DEP);
 
   const projectName = getConfigJson().projectName;
 
