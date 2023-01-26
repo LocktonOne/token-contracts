@@ -67,7 +67,7 @@ describe("TERC721", async () => {
 
     await token.__TERC721_init(params, TERC721Resource);
 
-    await token.setDependencies(registry.address);
+    await token.setDependencies(registry.address, "0x");
   }
 
   describe("access", () => {
@@ -84,8 +84,8 @@ describe("TERC721", async () => {
 
     it("only injector should set dependencies", async () => {
       await truffleAssert.reverts(
-        token.setDependencies(registry.address, { from: USER1 }),
-        "Dependant: Not an injector"
+        token.setDependencies(registry.address, "0x", { from: USER1 }),
+        "Dependant: not an injector"
       );
     });
   });

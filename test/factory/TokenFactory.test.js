@@ -91,7 +91,7 @@ describe("TokenFactory", async () => {
 
   describe("access", () => {
     it("only injector should set dependencies", async () => {
-      await truffleAssert.reverts(tokenFactory.setDependencies(registry.address), "Dependant: Not an injector");
+      await truffleAssert.reverts(tokenFactory.setDependencies(registry.address, "0x"), "Dependant: not an injector");
     });
   });
 
@@ -159,7 +159,7 @@ describe("TokenFactory", async () => {
 
         await tokenFactory.requestTERC20(DefaultTERC20Params, description, { from: USER1 });
 
-        await truffleAssert.passes(reviewableRequests.rejectRequest(0), "pass");
+        await truffleAssert.passes(reviewableRequests.rejectRequest(0, "reason"), "pass");
       });
 
       it("should not deploy TERC20 due to permissions", async () => {
@@ -235,7 +235,7 @@ describe("TokenFactory", async () => {
 
         await tokenFactory.requestTERC721(DefaultTERC721Params, description, { from: USER1 });
 
-        await truffleAssert.passes(reviewableRequests.rejectRequest(0), "pass");
+        await truffleAssert.passes(reviewableRequests.rejectRequest(0, "reason"), "pass");
       });
 
       it("should not deploy TERC721 due to permissions", async () => {

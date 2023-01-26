@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.17;
 
-import "@dlsl/dev-modules/pool-contracts-registry/AbstractPoolContractsRegistry.sol";
+import "@dlsl/dev-modules/contracts-registry/pools/AbstractPoolContractsRegistry.sol";
 
 import "@tokene/core-contracts/core/MasterAccessManagement.sol";
 import "@tokene/core-contracts/core/MasterContractsRegistry.sol";
@@ -31,8 +31,8 @@ contract TokenRegistry is ITokenRegistry, AbstractPoolContractsRegistry {
         _;
     }
 
-    function setDependencies(address registryAddress_) public override {
-        super.setDependencies(registryAddress_);
+    function setDependencies(address registryAddress_, bytes calldata data_) public override {
+        super.setDependencies(registryAddress_, data_);
 
         MasterContractsRegistry registry_ = MasterContractsRegistry(registryAddress_);
 
@@ -41,22 +41,31 @@ contract TokenRegistry is ITokenRegistry, AbstractPoolContractsRegistry {
     }
 
     function setNewImplementations(
-        string[] calldata names,
-        address[] calldata newImplementations
+        string[] calldata names_,
+        address[] calldata newImplementations_
     ) external override onlyCreatePermission {
-        _setNewImplementations(names, newImplementations);
+        _setNewImplementations(names_, newImplementations_);
     }
 
     function injectDependenciesToExistingPools(
-        string calldata name,
-        uint256 offset,
-        uint256 limit
+        string calldata name_,
+        uint256 offset_,
+        uint256 limit_
     ) external override onlyCreatePermission {
-        _injectDependenciesToExistingPools(name, offset, limit);
+        _injectDependenciesToExistingPools(name_, offset_, limit_);
     }
 
-    function addProxyPool(string calldata name, address poolAddress) external onlyTokenFactory {
-        _addProxyPool(name, poolAddress);
+    function injectDependenciesToExistingPoolsWithData(
+        string calldata name_,
+        bytes calldata data_,
+        uint256 offset_,
+        uint256 limit_
+    ) external override onlyCreatePermission {
+        _injectDependenciesToExistingPoolsWithData(name_, data_, offset_, limit_);
+    }
+
+    function addProxyPool(string calldata name_, address poolAddress_) external onlyTokenFactory {
+        _addProxyPool(name_, poolAddress_);
     }
 
     function _requirePermission(string memory permission_) internal view {

@@ -17,11 +17,11 @@
   ],
   "scripts": {
     "compile": "npx hardhat compile --force",
-    "deploy-dev": "npx hardhat deploy --network dev"
+    "deploy-dev": "npx hardhat migrate --network dev"
   },
   "dependencies": {
-    "@tokene/core-contracts": "^1.3.0",
-    "@dlsl/dev-modules": "1.7.4",
+    "@tokene/core-contracts": "1.5.0",
+    "@dlsl/dev-modules": "2.0.2",
     "@openzeppelin/contracts": "4.5.0",
     "@openzeppelin/contracts-upgradeable": "4.5.0",
     "dotenv": "^10.0.0",
@@ -32,7 +32,7 @@
   "devDependencies": {
     "@nomiclabs/hardhat-truffle5": "^2.0.1",
     "@nomiclabs/hardhat-web3": "^2.0.0",
-    "@dlsl/hardhat-migrate": "^1.2.0",
+    "@dlsl/hardhat-migrate": "^1.5.0",
     "bignumber.js": "^9.0.1",
     "web3": "^1.7.5"
   }

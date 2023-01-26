@@ -51,7 +51,10 @@ contract TERC721 is
         _;
     }
 
-    function setDependencies(address registryAddress_) external override dependant {
+    function setDependencies(
+        address registryAddress_,
+        bytes calldata
+    ) external override dependant {
         MasterContractsRegistry registry_ = MasterContractsRegistry(registryAddress_);
 
         _masterAccess = MasterAccessManagement(registry_.getMasterAccessManagement());

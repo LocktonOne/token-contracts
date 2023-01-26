@@ -1,11 +1,10 @@
-const { logTransaction } = require("@dlsl/hardhat-migrate");
 const { getConfigJson } = require("./config/config-getter");
 const { TOKEN_FACTORY_DEP } = require("./utils/constants");
 
 const Registry = artifacts.require("MasterContractsRegistry");
 const TokenFactory = artifacts.require("TokenFactory");
 
-module.exports = async (deployer) => {
+module.exports = async (deployer, logger) => {
   const config = await getConfigJson();
 
   if (config.addresses == undefined || config.addresses.MasterContractsRegistry == undefined) {
@@ -19,5 +18,8 @@ module.exports = async (deployer) => {
 
   const tokenFactory = await deployer.deploy(TokenFactory);
 
-  logTransaction(await registry.addProxyContract(TOKEN_FACTORY_DEP, tokenFactory.address), "Deploy TokenFactory");
+  logger.logTransaction(
+    await registry.addProxyContract(TOKEN_FACTORY_DEP, tokenFactory.address),
+    "Deploy TokenFactory"
+  );
 };

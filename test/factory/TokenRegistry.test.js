@@ -61,7 +61,7 @@ describe("TokenRegistry", async () => {
 
   describe("access", () => {
     it("only injector should set dependencies", async () => {
-      await truffleAssert.reverts(tokenRegistry.setDependencies(registry.address), "Dependant: Not an injector");
+      await truffleAssert.reverts(tokenRegistry.setDependencies(registry.address, "0x"), "Dependant: not an injector");
     });
   });
 
@@ -74,7 +74,7 @@ describe("TokenRegistry", async () => {
 
       await truffleAssert.reverts(
         tokenRegistry.getImplementation(name),
-        "PoolContractsRegistry: This mapping doesn't exist"
+        "PoolContractsRegistry: this mapping doesn't exist"
       );
 
       await tokenRegistry.setNewImplementations([name], [token.address], { from: USER1 });
@@ -130,6 +130,31 @@ describe("TokenRegistry", async () => {
 
       await truffleAssert.reverts(
         tokenRegistry.injectDependenciesToExistingPools(name, 0, 1, { from: USER1 }),
+        "TokenRegistry: access denied"
+      );
+    });
+  });
+
+  describe("injectDependenciesToExistingPoolsWithData", () => {
+    it("should inject dependencies", async () => {
+      const name = await tokenRegistry.TERC20_NAME();
+
+      await masterAccess.addPermissionsToRole(TokenRegistryRole, [TokenRegistryCreate], true);
+      await masterAccess.grantRoles(USER1, [TokenRegistryRole]);
+
+      await tokenRegistry.addProxyPool(name, token.address, { from: FACTORY });
+
+      await truffleAssert.passes(
+        tokenRegistry.injectDependenciesToExistingPoolsWithData(name, "0x", 0, 1, { from: USER1 }),
+        "pass"
+      );
+    });
+
+    it("should not inject dependencies due to permissions", async () => {
+      const name = await tokenRegistry.TERC20_NAME();
+
+      await truffleAssert.reverts(
+        tokenRegistry.injectDependenciesToExistingPoolsWithData(name, "0x11", 0, 1, { from: USER1 }),
         "TokenRegistry: access denied"
       );
     });

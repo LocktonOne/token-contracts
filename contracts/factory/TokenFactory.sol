@@ -3,7 +3,7 @@ pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
 
-import "@dlsl/dev-modules/pool-contracts-registry/pool-factory/AbstractPoolFactory.sol";
+import "@dlsl/dev-modules/contracts-registry/pools/pool-factory/AbstractPoolFactory.sol";
 
 import "@tokene/core-contracts/core/MasterContractsRegistry.sol";
 import "@tokene/core-contracts/core/ReviewableRequests.sol";
@@ -41,8 +41,8 @@ contract TokenFactory is ITokenFactory, AbstractPoolFactory {
         _;
     }
 
-    function setDependencies(address registryAddress_) public override {
-        super.setDependencies(registryAddress_);
+    function setDependencies(address registryAddress_, bytes calldata data_) public override {
+        super.setDependencies(registryAddress_, data_);
 
         MasterContractsRegistry registry_ = MasterContractsRegistry(registryAddress_);
 
