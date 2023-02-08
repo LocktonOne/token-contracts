@@ -5,13 +5,19 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 import "../interfaces/metadata/IContractMetadata.sol";
 
+/**
+ * @notice The abstract ContractMetadata contract that tokens inherit.
+ * Used to store a token's image and other offchain data
+ */
 abstract contract ContractMetadata is IContractMetadata, Initializable {
     string public constant CHANGE_METADATA_PERMISSION = "CHANGE_METADATA";
 
     string private _contractURI;
 
-    event ContractURIChanged(string contractURI);
-
+    /**
+     * @notice The initializer function
+     * @param contractURI_ the URI to the contract's metadata
+     */
     function __ContractMetadata_init(string memory contractURI_) internal onlyInitializing {
         _contractURI = contractURI_;
     }
@@ -20,6 +26,9 @@ abstract contract ContractMetadata is IContractMetadata, Initializable {
         _;
     }
 
+    /**
+     * @inheritdoc IContractMetadata
+     */
     function setContractMetadata(
         string calldata contractURI_
     ) external override onlyChangeMetadataPermission {
@@ -28,6 +37,9 @@ abstract contract ContractMetadata is IContractMetadata, Initializable {
         emit ContractURIChanged(contractURI_);
     }
 
+    /**
+     * @inheritdoc IContractMetadata
+     */
     function contractURI() external view override returns (string memory) {
         return _contractURI;
     }

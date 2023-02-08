@@ -12,7 +12,19 @@ interface ITERC20 is IERC20Upgradeable {
         uint256 totalSupplyCap;
     }
 
+    /**
+     * @notice The function to mint the tokens
+     * @dev Access: MINT permission for msg.sender, RECEIVE permission for the account_
+     * @param account_ the account to mint tokens to
+     * @param amount_ the minted amount
+     */
     function mintTo(address account_, uint256 amount_) external;
 
+    /**
+     * @notice The function to burn the tokens
+     * @dev Access: BURN permission for account_
+     * @param account_ the account to burn tokens from
+     * @param amount_ the burned amount
+     */
     function burnFrom(address account_, uint256 amount_) external;
 }

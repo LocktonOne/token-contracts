@@ -14,6 +14,12 @@ import "../tokens/TERC20.sol";
 import "../tokens/TERC721.sol";
 import "./TokenRegistry.sol";
 
+/**
+ * @notice The TokenFactory contract which is a part of the token factory TokenE module. It is used to request the deployment of
+ * TERC20 and TERC721 tokens via the ReviewableRequests core contract. Deploys beacon proxies.
+ *
+ * The access control is realized via MasterAccessManagement.
+ */
 contract TokenFactory is ITokenFactory, AbstractPoolFactory {
     using Strings for uint256;
 
@@ -28,9 +34,6 @@ contract TokenFactory is ITokenFactory, AbstractPoolFactory {
     ReviewableRequests internal _reviewableRequests;
     TokenRegistry internal _tokenRegistry;
 
-    event DeployedTERC20(address token, ITERC20.ConstructorParams);
-    event DeployedTERC721(address token, ITERC721.ConstructorParams);
-
     modifier onlyCreatePermission() {
         _requirePermission(CREATE_PERMISSION);
         _;
@@ -41,6 +44,12 @@ contract TokenFactory is ITokenFactory, AbstractPoolFactory {
         _;
     }
 
+    /**
+     * @notice The function to set dependencies
+     * @dev Access: the injector address
+     * @param registryAddress_ the ContractsRegistry address
+     * @param data_ empty additional data
+     */
     function setDependencies(address registryAddress_, bytes calldata data_) public override {
         super.setDependencies(registryAddress_, data_);
 
@@ -51,6 +60,9 @@ contract TokenFactory is ITokenFactory, AbstractPoolFactory {
         _tokenRegistry = TokenRegistry(registry_.getContract(TOKEN_REGISTRY_DEP));
     }
 
+    /**
+     * @inheritdoc ITokenFactory
+     */
     function requestTERC20(
         ITERC20.ConstructorParams calldata params_,
         string calldata description_
@@ -60,6 +72,9 @@ contract TokenFactory is ITokenFactory, AbstractPoolFactory {
         _reviewableRequests.createRequest(address(this), data_, "", "TERC20", description_);
     }
 
+    /**
+     * @inheritdoc ITokenFactory
+     */
     function deployTERC20(
         ITERC20.ConstructorParams calldata params_
     ) external override onlyExecutePermission {
@@ -77,6 +92,9 @@ contract TokenFactory is ITokenFactory, AbstractPoolFactory {
         emit DeployedTERC20(tokenProxy_, params_);
     }
 
+    /**
+     * @inheritdoc ITokenFactory
+     */
     function requestTERC721(
         ITERC721.ConstructorParams calldata params_,
         string calldata description_
@@ -86,6 +104,9 @@ contract TokenFactory is ITokenFactory, AbstractPoolFactory {
         _reviewableRequests.createRequest(address(this), data_, "", "TERC721", description_);
     }
 
+    /**
+     * @inheritdoc ITokenFactory
+     */
     function deployTERC721(
         ITERC721.ConstructorParams calldata params_
     ) external override onlyExecutePermission {
@@ -103,6 +124,9 @@ contract TokenFactory is ITokenFactory, AbstractPoolFactory {
         emit DeployedTERC721(tokenProxy_, params_);
     }
 
+    /**
+     * @notice The internal function to calculate the resource of the deployed tokens
+     */
     function _getTokenResource(
         string memory tokenType_,
         address tokenProxy_
@@ -110,6 +134,9 @@ contract TokenFactory is ITokenFactory, AbstractPoolFactory {
         return string.concat(tokenType_, ":", uint256(uint160(tokenProxy_)).toHexString(20));
     }
 
+    /**
+     * @notice The internal function to optimize the bytecode for the permission check
+     */
     function _requirePermission(string memory permission_) internal view {
         require(
             _masterAccess.hasPermission(msg.sender, TOKEN_FACTORY_RESOURCE, permission_),

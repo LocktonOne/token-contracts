@@ -8,6 +8,10 @@ import "@tokene/core-contracts/core/MasterContractsRegistry.sol";
 
 import "../interfaces/factory/ITokenRegistry.sol";
 
+/**
+ * @notice The TokenRegistry contract which works together with the TokenFactory. It is used to store and upgrade the
+ * deployed tokens. Integrated with the MasterAccessManagement contract.
+ */
 contract TokenRegistry is ITokenRegistry, AbstractPoolContractsRegistry {
     string public constant CREATE_PERMISSION = "CREATE";
 
@@ -31,6 +35,12 @@ contract TokenRegistry is ITokenRegistry, AbstractPoolContractsRegistry {
         _;
     }
 
+    /**
+     * @notice The function to set dependencies
+     * @dev Access: the injector address
+     * @param registryAddress_ the ContractsRegistry address
+     * @param data_ empty additional data
+     */
     function setDependencies(address registryAddress_, bytes calldata data_) public override {
         super.setDependencies(registryAddress_, data_);
 
@@ -40,6 +50,9 @@ contract TokenRegistry is ITokenRegistry, AbstractPoolContractsRegistry {
         _tokenFactory = registry_.getContract(TOKEN_FACTORY_DEP);
     }
 
+    /**
+     * @inheritdoc ITokenRegistry
+     */
     function setNewImplementations(
         string[] calldata names_,
         address[] calldata newImplementations_
@@ -47,6 +60,9 @@ contract TokenRegistry is ITokenRegistry, AbstractPoolContractsRegistry {
         _setNewImplementations(names_, newImplementations_);
     }
 
+    /**
+     * @inheritdoc ITokenRegistry
+     */
     function injectDependenciesToExistingPools(
         string calldata name_,
         uint256 offset_,
@@ -55,6 +71,9 @@ contract TokenRegistry is ITokenRegistry, AbstractPoolContractsRegistry {
         _injectDependenciesToExistingPools(name_, offset_, limit_);
     }
 
+    /**
+     * @inheritdoc ITokenRegistry
+     */
     function injectDependenciesToExistingPoolsWithData(
         string calldata name_,
         bytes calldata data_,
@@ -64,10 +83,19 @@ contract TokenRegistry is ITokenRegistry, AbstractPoolContractsRegistry {
         _injectDependenciesToExistingPoolsWithData(name_, data_, offset_, limit_);
     }
 
+    /**
+     * @notice The function to add the proxy pool
+     * @dev Access: TokenFactory
+     * @param name_ the type of the pool
+     * @param poolAddress_ the beacon proxy address of the pool
+     */
     function addProxyPool(string calldata name_, address poolAddress_) external onlyTokenFactory {
         _addProxyPool(name_, poolAddress_);
     }
 
+    /**
+     * @notice The internal function to optimize the bytecode for the permission check
+     */
     function _requirePermission(string memory permission_) internal view {
         require(
             _masterAccess.hasPermission(msg.sender, TOKEN_REGISTRY_RESOURCE, permission_),
