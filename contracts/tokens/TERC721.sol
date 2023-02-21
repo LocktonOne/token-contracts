@@ -168,9 +168,10 @@ contract TERC721 is
     function _beforeTokenTransfer(
         address from_,
         address to_,
-        uint256 tokenId_
+        uint256 tokenId_,
+        uint256 batchSize_
     ) internal override(ERC721EnumerableUpgradeable, ERC721Upgradeable) {
-        super._beforeTokenTransfer(from_, to_, tokenId_);
+        super._beforeTokenTransfer(from_, to_, tokenId_, batchSize_);
 
         if (from_ == address(0)) {
             _requirePermission(msg.sender, MINT_PERMISSION);
