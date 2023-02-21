@@ -187,7 +187,7 @@ describe("TERC721", async () => {
 
       assert.equal(await token.balanceOf(USER2), "0");
 
-      await truffleAssert.reverts(token.tokenURI(1), "ERC721URIStorage: URI query for nonexistent token");
+      await truffleAssert.reverts(token.tokenURI(1), "ERC721: invalid token ID");
     });
 
     it("should be able to burn approved token", async () => {
