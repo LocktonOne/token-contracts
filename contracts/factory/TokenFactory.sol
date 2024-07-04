@@ -1,27 +1,32 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.17;
 
-import "@openzeppelin/contracts/utils/Strings.sol";
+import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
-import "@dlsl/dev-modules/contracts-registry/pools/pool-factory/AbstractPoolFactory.sol";
+import {AbstractPoolFactory} from "@dlsl/dev-modules/contracts-registry/pools/pool-factory/AbstractPoolFactory.sol";
+import {Paginator} from "@dlsl/dev-modules/libs/arrays/Paginator.sol";
 
-import "@tokene/core-contracts/core/MasterContractsRegistry.sol";
-import "@tokene/core-contracts/core/ReviewableRequests.sol";
+import {ReviewableRequests} from "@tokene/core-contracts/core/ReviewableRequests.sol";
+import {MasterContractsRegistry} from "@tokene/core-contracts/core/MasterContractsRegistry.sol";
+import {MasterAccessManagement} from "@tokene/core-contracts/core/MasterAccessManagement.sol";
 
-import "../interfaces/factory/ITokenFactory.sol";
+import {ITERC20} from "../interfaces/tokens/ITERC20.sol";
+import {ITokenFactory} from "../interfaces/factory/ITokenFactory.sol";
 
-import "../tokens/TERC20.sol";
-import "../tokens/TERC721.sol";
-import "./TokenRegistry.sol";
+import {TERC20} from "../tokens/TERC20.sol";
+import {TokenRegistry} from "./TokenRegistry.sol";
 
 /**
  * @notice The TokenFactory contract which is a part of the token factory TokenE module. It is used to request the deployment of
- * TERC20 and TERC721 tokens via the ReviewableRequests core contract. Deploys beacon proxies.
+ * TERC20 tokens via the ReviewableRequests core contract. Deploys beacon proxies.
  *
  * The access control is realized via MasterAccessManagement.
  */
 contract TokenFactory is ITokenFactory, AbstractPoolFactory {
     using Strings for uint256;
+    using EnumerableSet for EnumerableSet.AddressSet;
+    using Paginator for EnumerableSet.AddressSet;
 
     string public constant CREATE_PERMISSION = "CREATE";
     string public constant EXECUTE_PERMISSION = "EXECUTE";
@@ -33,6 +38,8 @@ contract TokenFactory is ITokenFactory, AbstractPoolFactory {
     MasterAccessManagement internal _masterAccess;
     ReviewableRequests internal _reviewableRequests;
     TokenRegistry internal _tokenRegistry;
+
+    EnumerableSet.AddressSet internal _tokensDeployed;
 
     modifier onlyCreatePermission() {
         _requirePermission(CREATE_PERMISSION);
@@ -90,38 +97,39 @@ contract TokenFactory is ITokenFactory, AbstractPoolFactory {
         _injectDependencies(address(_tokenRegistry), tokenProxy_);
 
         emit DeployedTERC20(tokenProxy_, params_);
+
+        _tokensDeployed.add(tokenProxy_);
     }
 
     /**
      * @inheritdoc ITokenFactory
      */
-    function requestTERC721(
-        ITERC721.ConstructorParams calldata params_,
-        string calldata description_
-    ) external override onlyCreatePermission {
-        bytes memory data_ = abi.encodeWithSelector(this.deployTERC721.selector, params_);
-
-        _reviewableRequests.createRequest(address(this), data_, "", "TERC721", description_);
+    function getDeployedTokens() external view returns (address[] memory tokens_) {
+        return _tokensDeployed.values();
     }
 
     /**
      * @inheritdoc ITokenFactory
      */
-    function deployTERC721(
-        ITERC721.ConstructorParams calldata params_
-    ) external override onlyExecutePermission {
-        string memory tokenType_ = _tokenRegistry.TERC721_NAME();
+    function countTokens() external view returns (uint256) {
+        return _tokensDeployed.length();
+    }
 
-        address tokenProxy_ = _deploy(address(_tokenRegistry), tokenType_);
+    /**
+     * @inheritdoc ITokenFactory
+     */
+    function isTokenExist(address token_) external view returns (bool) {
+        return _tokensDeployed.contains(token_);
+    }
 
-        string memory tokenResource_ = _getTokenResource(tokenType_, tokenProxy_);
-
-        TERC721(tokenProxy_).__TERC721_init(params_, tokenResource_);
-
-        _register(address(_tokenRegistry), tokenType_, tokenProxy_);
-        _injectDependencies(address(_tokenRegistry), tokenProxy_);
-
-        emit DeployedTERC721(tokenProxy_, params_);
+    /**
+     * @inheritdoc ITokenFactory
+     */
+    function listTokens(
+        uint256 offset_,
+        uint256 limit_
+    ) external view returns (address[] memory tokens_) {
+        return _tokensDeployed.part(offset_, limit_);
     }
 
     /**

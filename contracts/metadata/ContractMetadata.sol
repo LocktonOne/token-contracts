@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.17;
 
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-import "../interfaces/metadata/IContractMetadata.sol";
+import {IContractMetadata} from "../interfaces/metadata/IContractMetadata.sol";
 
 /**
  * @notice The abstract ContractMetadata contract that tokens inherit.

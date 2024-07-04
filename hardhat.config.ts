@@ -1,30 +1,24 @@
-require("@nomiclabs/hardhat-web3");
-require("@nomiclabs/hardhat-truffle5");
-require("@typechain/hardhat");
-require("@dlsl/hardhat-migrate");
-require("@dlsl/hardhat-markup");
-require("hardhat-contract-sizer");
-require("hardhat-gas-reporter");
-require("solidity-coverage");
+import "@nomicfoundation/hardhat-ethers";
+import "@nomicfoundation/hardhat-chai-matchers";
+import "@nomiclabs/hardhat-web3";
+import "@solarity/hardhat-migrate";
+import "@solarity/hardhat-markup";
+import "@typechain/hardhat";
+import "hardhat-contract-sizer";
+import "hardhat-gas-reporter";
+import "solidity-coverage";
+import "tsconfig-paths/register";
 
-const dotenv = require("dotenv");
+import { HardhatUserConfig } from "hardhat/config";
+
+import * as dotenv from "dotenv";
 dotenv.config();
 
 function privateKey() {
   return process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [];
 }
 
-function typechainTarget() {
-  const target = process.env.TYPECHAIN_TARGET;
-
-  return target == "" || target == undefined ? "ethers-v5" : target;
-}
-
-function forceTypechain() {
-  return process.env.TYPECHAIN_FORCE == "true";
-}
-
-module.exports = {
+const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       initialDate: "1970-01-01T00:00:00Z",
@@ -95,10 +89,11 @@ module.exports = {
     coinmarketcap: `${process.env.COINMARKETCAP_KEY}`,
   },
   typechain: {
-    outDir: `generated-types/${typechainTarget().split("-")[0]}`,
-    target: typechainTarget(),
+    outDir: "generated-types/ethers",
+    target: "ethers-v6",
     alwaysGenerateOverloads: true,
     discriminateTypes: true,
-    dontOverrideCompile: true & !forceTypechain(),
   },
 };
+
+export default config;
