@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.17;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import {IERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 
 interface ITERC20 is IERC20Upgradeable {
     struct ConstructorParams {
@@ -10,6 +10,7 @@ interface ITERC20 is IERC20Upgradeable {
         string contractURI;
         uint8 decimals;
         uint256 totalSupplyCap;
+        uint8 permissions;
     }
 
     /**
@@ -27,4 +28,10 @@ interface ITERC20 is IERC20Upgradeable {
      * @param amount_ the burned amount
      */
     function burnFrom(address account_, uint256 amount_) external;
+
+    /**
+     * @notice The function to get the array of permissions for token
+     * @return array of permissions
+     */
+    function getTokenPermissions() external view returns (string[] memory);
 }

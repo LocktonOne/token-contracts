@@ -1,6 +1,6 @@
 require("@nomiclabs/hardhat-web3");
 require("@nomiclabs/hardhat-truffle5");
-require("@dlsl/hardhat-migrate");
+require("@solarity/hardhat-migrate");
 const { TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD } = require("hardhat/builtin-tasks/task-names");
 
 const path = require("path");
