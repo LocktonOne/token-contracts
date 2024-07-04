@@ -21,6 +21,14 @@ contract TERC20 is ITERC20, ERC20Upgradeable, ContractMetadata, AbstractDependan
     string public constant SPEND_PERMISSION = "SPEND";
     string public constant RECEIVE_PERMISSION = "RECEIVE";
 
+    enum Permissions {
+        MINT,
+        BURN,
+        SPEND,
+        RECEIVE,
+        CHANGE_METADATA
+    }
+
     string public TERC20_RESOURCE;
 
     MasterAccessManagement internal _masterAccess;
@@ -30,7 +38,6 @@ contract TERC20 is ITERC20, ERC20Upgradeable, ContractMetadata, AbstractDependan
     uint256 public totalSupplyCap;
 
     uint8 public tokenPermissions;
-    mapping(uint8 => string) internal _tokenPermissionsMap;
 
     /**
      * @notice The initializer function
@@ -51,16 +58,10 @@ contract TERC20 is ITERC20, ERC20Upgradeable, ContractMetadata, AbstractDependan
         totalSupplyCap = params_.totalSupplyCap;
 
         tokenPermissions = params_.permissions;
-
-        _tokenPermissionsMap[0] = MINT_PERMISSION;
-        _tokenPermissionsMap[1] = BURN_PERMISSION;
-        _tokenPermissionsMap[2] = SPEND_PERMISSION;
-        _tokenPermissionsMap[3] = RECEIVE_PERMISSION;
-        _tokenPermissionsMap[4] = CHANGE_METADATA_PERMISSION;
     }
 
     modifier onlyChangeMetadataPermission() override {
-        _requirePermission(msg.sender, CHANGE_METADATA_PERMISSION, 4);
+        _requirePermission(msg.sender, Permissions.CHANGE_METADATA);
         _;
     }
 
@@ -112,17 +113,16 @@ contract TERC20 is ITERC20, ERC20Upgradeable, ContractMetadata, AbstractDependan
     /**
      * @inheritdoc ITERC20
      */
-    function getTokenPermissions() external view override returns (string[] memory) {
-        string[] memory permissions_ = new string[](5);
+    function getTokenPermissions() external view override returns (string[] memory permissions_) {
+        permissions_ = new string[](5);
         uint8 arrayIndex_ = 0;
 
-        for (uint8 bitLocation_ = 0; bitLocation_ < 5; bitLocation_++) {
+        for (uint8 bitLocation_ = 0; bitLocation_ < 5; ++bitLocation_) {
             if ((tokenPermissions >> bitLocation_) & 1 == 1) {
-                permissions_[arrayIndex_] = _tokenPermissionsMap[bitLocation_];
+                permissions_[arrayIndex_] = _getPermissionByNumber(Permissions(bitLocation_));
                 arrayIndex_++;
             }
         }
-        return permissions_;
     }
 
     /**
@@ -130,28 +130,43 @@ contract TERC20 is ITERC20, ERC20Upgradeable, ContractMetadata, AbstractDependan
      */
     function _beforeTokenTransfer(address from, address to, uint256) internal view override {
         if (from == address(0)) {
-            _requirePermission(msg.sender, MINT_PERMISSION, 0);
-            _requirePermission(to, RECEIVE_PERMISSION, 3);
+            _requirePermission(msg.sender, Permissions.MINT);
+            _requirePermission(to, Permissions.RECEIVE);
         } else if (to == address(0)) {
-            _requirePermission(from, BURN_PERMISSION, 1);
+            _requirePermission(from, Permissions.BURN);
         } else {
-            _requirePermission(from, SPEND_PERMISSION, 2);
-            _requirePermission(to, RECEIVE_PERMISSION, 3);
+            _requirePermission(from, Permissions.SPEND);
+            _requirePermission(to, Permissions.RECEIVE);
         }
     }
 
     /**
      * @notice The internal function to optimize the bytecode for the permission check
      */
-    function _requirePermission(
-        address account_,
-        string memory permission_,
-        uint8 permissionNumber_
-    ) internal view {
+    function _requirePermission(address account_, Permissions permissionNumber_) internal view {
         require(
-            _masterAccess.hasPermission(account_, TERC20_RESOURCE, permission_) ||
-                (tokenPermissions >> permissionNumber_) & 1 == 1,
+            _masterAccess.hasPermission(
+                account_,
+                TERC20_RESOURCE,
+                _getPermissionByNumber(permissionNumber_)
+            ) || (tokenPermissions >> uint8(permissionNumber_)) & 1 == 1,
             "TERC20: access denied"
         );
+    }
+
+    function _getPermissionByNumber(
+        Permissions permissionNumber_
+    ) private pure returns (string memory permission_) {
+        if (permissionNumber_ == Permissions.MINT) {
+            return MINT_PERMISSION;
+        } else if (permissionNumber_ == Permissions.BURN) {
+            return BURN_PERMISSION;
+        } else if (permissionNumber_ == Permissions.SPEND) {
+            return SPEND_PERMISSION;
+        } else if (permissionNumber_ == Permissions.RECEIVE) {
+            return RECEIVE_PERMISSION;
+        }
+
+        return CHANGE_METADATA_PERMISSION;
     }
 }
