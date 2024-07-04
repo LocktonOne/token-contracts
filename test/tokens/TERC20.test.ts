@@ -19,6 +19,7 @@ import {
 } from "../utils/constants";
 
 import { MasterContractsRegistry, MasterAccessManagement, TERC20, IRBAC } from "@ethers-v6";
+import { ITERC20 } from "@/generated-types/ethers/contracts/tokens/TERC20";
 
 describe("TERC20", async () => {
   const reverter = new Reverter();
@@ -77,7 +78,7 @@ describe("TERC20", async () => {
 
   afterEach("revert", reverter.revert);
 
-  async function deployTERC20(params: any) {
+  async function deployTERC20(params: ITERC20.ConstructorParamsStruct) {
     const TERC20 = await ethers.getContractFactory("TERC20");
     token = await TERC20.deploy();
 
@@ -124,16 +125,11 @@ describe("TERC20", async () => {
     });
 
     it("should be able to mint tokens without role with token permission", async () => {
-      const tokenParams = {
-        name: "name",
-        symbol: "symbol",
-        contractURI: "URI",
-        decimals: 18,
+      await deployTERC20({
+        ...DefaultTERC20Params,
         totalSupplyCap: wei("100"),
         permissions: TERC20PermissionMintAndReceive,
-      };
-
-      await deployTERC20(tokenParams);
+      });
 
       expect(await token.balanceOf(USER2)).to.be.equal(0);
 
@@ -143,16 +139,11 @@ describe("TERC20", async () => {
     });
 
     it("should be able to mint capped tokens", async () => {
-      const tokenParams = {
-        name: "name",
-        symbol: "symbol",
-        contractURI: "URI",
-        decimals: 18,
+      await deployTERC20({
+        ...DefaultTERC20Params,
         totalSupplyCap: wei("100"),
         permissions: TERC20PermissionMintAndReceive,
-      };
-
-      await deployTERC20(tokenParams);
+      });
 
       await masterAccess.addPermissionsToRole(TERC20Role, [TERC20Mint, TERC20Receive], true);
       await masterAccess.grantRoles(USER1, [TERC20Role]);
@@ -166,16 +157,11 @@ describe("TERC20", async () => {
     });
 
     it("should not exceed the cap", async () => {
-      const tokenParams = {
-        name: "name",
-        symbol: "symbol",
-        contractURI: "URI",
-        decimals: 18,
+      await deployTERC20({
+        ...DefaultTERC20Params,
         totalSupplyCap: wei("100"),
         permissions: TERC20PermissionNone,
-      };
-
-      await deployTERC20(tokenParams);
+      });
 
       await masterAccess.addPermissionsToRole(TERC20Role, [TERC20Mint, TERC20Receive], true);
       await masterAccess.grantRoles(USER1, [TERC20Role]);
@@ -218,16 +204,11 @@ describe("TERC20", async () => {
     });
 
     it("should be able to burn tokens without role with token permission", async () => {
-      const tokenParams = {
-        name: "name",
-        symbol: "symbol",
-        contractURI: "URI",
-        decimals: 18,
+      await deployTERC20({
+        ...DefaultTERC20Params,
         totalSupplyCap: wei("100"),
         permissions: TERC20PermissionAll,
-      };
-
-      await deployTERC20(tokenParams);
+      });
 
       await token.connect(USER1).mintTo(USER2, wei("100"));
       await token.connect(USER2).burnFrom(USER2, wei("100"));
@@ -302,16 +283,11 @@ describe("TERC20", async () => {
     });
 
     it("should be able to transfer tokens without role with token permission", async () => {
-      const tokenParams = {
-        name: "name",
-        symbol: "symbol",
-        contractURI: "URI",
-        decimals: 18,
+      await deployTERC20({
+        ...DefaultTERC20Params,
         totalSupplyCap: wei("100"),
         permissions: TERC20PermissionAll,
-      };
-
-      await deployTERC20(tokenParams);
+      });
 
       await token.connect(USER1).mintTo(USER2, wei("100"));
       await token.connect(USER2).transfer(USER1, wei("10"));
@@ -393,16 +369,10 @@ describe("TERC20", async () => {
     });
 
     it("should set new contract metadata without role with token permission", async () => {
-      const tokenParams = {
-        name: "name",
-        symbol: "symbol",
-        contractURI: "URI",
-        decimals: 18,
-        totalSupplyCap: wei("100"),
+      await deployTERC20({
+        ...DefaultTERC20Params,
         permissions: TERC20PermissionAll,
-      };
-
-      await deployTERC20(tokenParams);
+      });
 
       expect(await token.contractURI()).to.be.equal(DefaultTERC20Params.contractURI);
 
@@ -423,6 +393,21 @@ describe("TERC20", async () => {
       await deployTERC20(DefaultTERC20Params);
 
       await expect(token.connect(USER1).setContractMetadata("NEW_URI")).to.be.rejectedWith("TERC20: access denied");
+    });
+
+    it("should correctly return token permissions", async () => {
+      await deployTERC20({
+        ...DefaultTERC20Params,
+        permissions: 0b01101,
+      });
+
+      expect(await token.getTokenPermissions()).to.be.deep.equal([
+        MINT_PERMISSION,
+        SPEND_PERMISSION,
+        RECEIVE_PERMISSION,
+        "",
+        "",
+      ]);
     });
   });
 });
