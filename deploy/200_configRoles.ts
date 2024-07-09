@@ -11,10 +11,10 @@ import {
   EXECUTE_PERMISSION,
   TOKEN_FACTORY_DEP,
 } from "./utils/constants";
-import { getConfigJson } from "./config/config-getter";
+import { getConfigJsonFromVault } from "./config/config-getter";
 
 export = async (deployer: Deployer) => {
-  const config = await getConfigJson();
+  const config = await getConfigJsonFromVault();
 
   const registry = await deployer.deployed(MasterContractsRegistry__factory, config.addresses.MasterContractsRegistry);
 
