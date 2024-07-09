@@ -28,8 +28,8 @@ const config: HardhatUserConfig = {
       accounts: privateKey(),
       gasMultiplier: 1.2,
     },
-    goerli: {
-      url: `https://goerli.infura.io/v3/${process.env.INFURA_KEY}`,
+    sepolia: {
+      url: "https://ethereum-sepolia-rpc.publicnode.com",
       accounts: privateKey(),
       gasMultiplier: 1.2,
     },
@@ -62,7 +62,7 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: {
       mainnet: `${process.env.ETHERSCAN_KEY}`,
-      goerli: `${process.env.ETHERSCAN_KEY}`,
+      sepolia: `${process.env.ETHERSCAN_KEY}`,
       bsc: `${process.env.BSCSCAN_KEY}`,
       bscTestnet: `${process.env.BSCSCAN_KEY}`,
     },

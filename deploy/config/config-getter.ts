@@ -1,4 +1,4 @@
-export async function getConfigJson() {
+export async function getConfigJsonFromVault() {
   const vault = require("node-vault")({
     apiVersion: "v1",
     endpoint: process.env.VAULT_ENDPOINT,
