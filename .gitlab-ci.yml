@@ -3,7 +3,7 @@ default:
     name: "docker:18"
     entrypoint: [""]
   services:
-    - name: docker:18-dind
+    - name: docker:20-dind
       alias: docker
       # in our experience although you'd assume this would be sufficient, this did
       # nothing to prevent connection errors without `DOCKER_TLS_CERTDIR` being set
@@ -16,14 +16,39 @@ variables:
   DOCKER_DRIVER: overlay2
   DOCKER_HOST: tcp://docker:2375
   DOCKER_TLS_CERTDIR: ""
-  CONTAINER_RELEASE_IMAGE: $IMAGE_DOCKER:$CI_COMMIT_SHA
+  REGISTRY: registry.gitlab.com/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME
+  IMAGE_NAME: $REGISTRY:$CI_COMMIT_SHA
+  IMAGE_NAME_TAG: $REGISTRY:$CI_COMMIT_TAG
+
+
+.before_script_template: &before_script_templ
+  before_script:
+    - docker version
+    - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
 
 stages:
   - build
 
-build:
+Build And Publish:
   stage: build
+  only:
+    - branches
+  <<: *before_script_templ
   script:
-    - docker login -u "${USER_DOCKER}" -p "${PASSWORD_DOCKER}"
-    - docker build --pull -t "$CONTAINER_RELEASE_IMAGE" -f docker/Dockerfile .
-    - docker push "$CONTAINER_RELEASE_IMAGE"
+    - docker build --pull -t "$IMAGE_NAME" -f docker/Dockerfile .
+    - docker push "$IMAGE_NAME"
+  except: [schedules]
+  interruptible: true
+
+
+
+Build And Publish Tag:
+  stage: build
+  only:
+    - tags
+  <<: *before_script_templ
+  script:
+    - docker build --pull -t "$IMAGE_NAME_TAG" -f docker/Dockerfile .
+    - docker push "$IMAGE_NAME_TAG"
+  except: [schedules]
+  interruptible: true
