@@ -21,6 +21,8 @@ contract TERC20 is ITERC20, ERC20Upgradeable, ContractMetadata, AbstractDependan
     string public constant SPEND_PERMISSION = "SPEND";
     string public constant RECEIVE_PERMISSION = "RECEIVE";
 
+    string public constant TERC20_RESOURCE = "TERC20";
+
     enum Permissions {
         MINT,
         BURN,
@@ -28,8 +30,6 @@ contract TERC20 is ITERC20, ERC20Upgradeable, ContractMetadata, AbstractDependan
         RECEIVE,
         CHANGE_METADATA
     }
-
-    string public TERC20_RESOURCE;
 
     MasterAccessManagement internal _masterAccess;
 
@@ -42,16 +42,13 @@ contract TERC20 is ITERC20, ERC20Upgradeable, ContractMetadata, AbstractDependan
     /**
      * @notice The initializer function
      * @param params_ the constructor params
-     * @param resource_ the TERC20 resource to be used for RBAC
      */
     function __TERC20_init(
         ConstructorParams calldata params_,
-        string calldata resource_
+        string calldata
     ) external initializer {
         __ERC20_init(params_.name, params_.symbol);
         __ContractMetadata_init(params_.contractURI);
-
-        TERC20_RESOURCE = resource_;
 
         _decimals = params_.decimals;
 

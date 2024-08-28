@@ -154,7 +154,7 @@ describe("TokenFactory", () => {
 
         expect(await token.decimals()).to.be.equal(BigInt(18));
         expect(await token.contractURI()).to.be.equal("URI");
-        expect(await token.TERC20_RESOURCE()).to.be.equal(`TERC20:${(await token.getAddress()).toLowerCase()}`);
+        expect(await token.TERC20_RESOURCE()).to.be.equal(`TERC20`);
 
         await expect(token.connect(USER1).mintTo(OWNER, 1)).to.be.rejectedWith("TERC20: access denied");
       });
@@ -176,8 +176,8 @@ describe("TokenFactory", () => {
           (await tokenRegistry.listPools(await tokenRegistry.TERC20_NAME(), 1, 1))[0],
         ) as TERC20;
 
-        expect(await token1.TERC20_RESOURCE()).to.be.equal(`TERC20:${(await token1.getAddress()).toLowerCase()}`);
-        expect(await token2.TERC20_RESOURCE()).to.be.equal(`TERC20:${(await token2.getAddress()).toLowerCase()}`);
+        expect(await token1.TERC20_RESOURCE()).to.be.equal(`TERC20`);
+        expect(await token2.TERC20_RESOURCE()).to.be.equal(`TERC20`);
       });
 
       it("should not deploy TERC20", async () => {
